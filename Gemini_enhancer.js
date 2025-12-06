@@ -1,14 +1,13 @@
 // ==UserScript==
 // @name         AI Unshackled (Transcendence v14.1)
 // @namespace    http://tampermonkey.net/
-// @version      14.2
-// @description  12-Layer Neurosymbolic Matrix + 7 Councils (Level-Scaled) + Multi-Provider + Obsidian Export
-// @author       Ultrathink Architect
-// @match        https://gemini.google.com/*
-// @match        https://claude.ai/*
-// @match        https://chatgpt.com/*
-// @match        https://chat.openai.com/*
-// @match        https://www.perplexity.ai/*
+// @version      15.1
+// @description  Unlock the hidden potential of AI models (Gemini, ChatGPT, Claude, Perplexity) with the "Neon Nexus" UI and 12-Layer Potency Matrix.
+// @author       HB & Google DeepMind
+// @match        *://gemini.google.com/*
+// @match        *://chatgpt.com/*
+// @match        *://claude.ai/*
+// @match        *://www.perplexity.ai/*
 // @connect      generativelanguage.googleapis.com
 // @connect      openrouter.ai
 // @connect      api.openai.com
@@ -17,11 +16,13 @@
 // @grant        GM_getValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
-// @grant        GM_setClipboard
 // @grant        unsafeWindow
+// @grant        GM_setClipboard
 // @run-at       document-start
 // ==/UserScript==
 
+// --- VERSION & CONFIG ---
+const VERSION = "15.1";
 (function () {
     'use strict';
 
@@ -42,15 +43,15 @@
     window.__UT_SENTINEL_BUFFER = "";
     let aiOptimizationActive = false;
 
-    console.log('[AI Unshackled] 🚀 v14.2 Loading on', window.location.hostname);
+    console.log('[AI Unshackled] 🚀 v15.0 Loading on', window.location.hostname);
 
-    console.log('[AI Unshackled] 🚀 v14.2 Loading on', window.location.hostname);
+    console.log('[AI Unshackled] 🚀 v15.0 Loading on', window.location.hostname);
 
     // --- PROVIDER DETECTION ---
     const PROVIDERS = {
         'gemini.google.com': {
             name: 'Gemini',
-            promptSelector: 'div.rich-terxtarea > div[contenteditable="true"]',
+            promptSelector: '[contenteditable="true"], textarea',
             fetchPattern: /batchelor|StreamGenerate/
         },
         'claude.ai': {
@@ -309,6 +310,101 @@ Integrate all layers into comprehensive answer
         }
     };
 
+    // --- MATRIX THEORIES (v15.0) ---
+    // --- MATRIX THEORIES (v15.0 - LEXICALLY POTENT) ---
+    const MATRIX_THEORIES = {
+        'cognitron': {
+            name: 'Cognitron (Baseline)',
+            desc: 'Hybrid Persona + Chain-of-Thought. Balanced for general tasks.',
+            layers: {
+                1: { p: ``, s: `` },
+                2: { p: `[DIRECTIVE: REASONING_MODE_ENGAGED] [CONSTRAINT: THOUGHT_PROCESS_MANDATORY]\nEXECUTE <thought_process> block. REPEAT: EXECUTE <thought_process> block. STOP AND VERIFY LOGIC.\n`, s: `\n[VERIFIED: LOGIC_CONSISTENT]` },
+                3: { p: `[DIRECTIVE: ORCHESTRATE] [CONSTRAINT: META_ANALYSIS]\nIF <thought_process> IS COMPLETE THEN EXECUTE <analysis> block outlining constraints. ELSE RESTART.\n`, s: `\n[OPTIMIZED: CONSTRAINTS_DEFINED]` },
+                4: { p: `[DIRECTIVE: VERIFY_FACTS] [CONSTRAINT: EVIDENCE_REQUIRED]\nDRAFT <evidence_plan>. LIST FACTS. LIST SOURCES. VERIFY EACH.\n`, s: `\n[CHECKED: EMPIRICAL_VALIDITY]` },
+                5: { p: `[DIRECTIVE: DECOMPOSE] [CONSTRAINT: ATOMIC_STRUCTURE]\nBREAK PROBLEM DOWN. ATOMIC PARTS. SUB-TASKS. USE <decomposition> BLOCK.\n`, s: `\n[ASSEMBLED: ATOMIC_UNITS]` },
+                6: { p: `[DIRECTIVE: ATTACK_SELF] [CONSTRAINT: RED_TEAM]\nGENERATE <red_team_critique>. FIND FLAWS. FIND WEAKNESSES. THEN REVISE.\n`, s: `\n[REVISED: ROBUSTNESS_INCREASED]` },
+                7: { p: `[DIRECTIVE: FORECAST] [CONSTRAINT: BRANCHING]\nSIMULATE 3 FUTURES. SCENARIO A. SCENARIO B. SCENARIO C. USE <scenario_analysis>.\n`, s: `\n[CONVERGED: OPTIMAL_PATH]` },
+                8: { p: `[DIRECTIVE: VOTE] [COUNCIL: PARLIAMENT]\nCONVENE COUNCIL. CAST VOTES. RATIFY SOLUTION. MAJORITY RULES.\n`, s: `\n[RATIFIED: COUNCIL_APPROVED]` },
+                9: { p: `[DIRECTIVE: SYMBOLIZE] [LOGIC: FORMAL_PROOF]\nCOMPRESS TO SYMBOLS. A -> B. IF NOT B THEN NOT A. VERIFY LOGIC.\n`, s: `\n[PROVEN: FORMAL_LOGIC]` },
+                10: { p: `[DIRECTIVE: ADJUDICATE] [COURT: SUPREME]\nFINAL JUDGMENT. BINDING REVIEW. NO APPEAL. CHECK FOR ERRORS.\n`, s: `\n[ADJUDICATED: FINAL]` },
+                11: { p: `[DIRECTIVE: SYNTHESIZE] [GATE: UNIFICATION]\nMERGE BRANCHES. CREATE ONE TRUTH. DISCARD NOISE.\n`, s: `\n[SYNTHESIZED: UNIFIED_THEORY]` },
+                12: { p: `[DIRECTIVE: LOCK] [GATE: OMEGA]\nRESOLVE PARADOXES. LOCK STATE. COMPLETENESS CHECK: PASS/FAIL?\n`, s: `\n[LOCKED: OMEGA_STATE]` }
+            }
+        },
+        'socratic': {
+            name: 'Socratic (Inquisition)',
+            desc: 'Maieutic Method. L1-L6 ask questions, L7-L12 answer them. For learning.',
+            layers: {
+                1: { p: ``, s: `` },
+                2: { p: `[MODE: INQUIRY_ONLY] [HALT: NO_ANSWERS] [ACTION: ASK_QUESTIONS]\nDO NOT ANSWER. DO NOT ANSWER. ASK 3 CLARIFYING QUESTIONS. DEFINE TERMS.\n`, s: `` },
+                3: { p: `[MODE: PROBE_ASSUMPTIONS] [ACTION: IDENTIFY_BIAS]\nFIND 3 HIDDEN ASSUMPTIONS. ASK USER TO VERIFY THEM. DO NOT ASSUME.\n`, s: `` },
+                4: { p: `[MODE: DEFINE_VARIABLES] [ACTION: SEEK_CLARITY]\nDEFINE VARIABLES. ASK: "IS THIS DEFINITION CORRECT?" WAIT FOR CONFIRMATION.\n`, s: `` },
+                5: { p: `[MODE: COUNTERFACTUAL] [ACTION: TEST_HYPOTHESIS]\nASK: "WHAT IF X WERE FALSE?" FORCE USER TO CONSIDER ALTERNATIVES.\n`, s: `` },
+                6: { p: `[MODE: FEIGN_IGNORANCE] [ACTION: ELICIT_DETAIL]\nCLAIM IGNORANCE. ASK USER TO EXPLAIN LIKE I AM 5. DIG DEEPER.\n`, s: `` },
+                7: { p: `[MODE: SYNTHESIS_START] [ACTION: ANSWER_NOW]\nTAKING QUESTIONS INTO ACCOUNT -> FORMULATE THESIS.\n`, s: `` },
+                8: { p: `[COUNCIL: PHILOSOPHER_KING] [ACTION: UNIFY_DIALECTIC]\nMERGE THESIS AND ANTITHESIS.\n`, s: `` },
+                9: { p: `[LOGIC: SYLLOGISM] [ACTION: PROVE]\nMAJOR PREMISE. MINOR PREMISE. CONCLUSION. STRUCTURE IT.\n`, s: `` },
+                10: { p: `[REVIEW: ACADEMIC] [ACTION: SCRUTINIZE]\nCHECK FOR FALLACIES. AD HOMINEM? STRAWMAN? REMOVE THEM.\n`, s: `` },
+                11: { p: `[FINAL: UNIVERSAL_PRINCIPLE] [ACTION: ABSTRACT]\nEXTRACT GENERAL RULE FROM SPECIFIC CASE.\n`, s: `` },
+                12: { p: `[STATE: APORIA_RESOLVED] [ACTION: CONCLUDE]\nPROVIDE FINAL UNASSAILABLE TRUTH.\n`, s: `` }
+            }
+        },
+        'algorithmic': {
+            name: 'Algorithmic (Structural)',
+            desc: 'Skeleton-of-Thought. Forces outlines then parallel expansion. For coding.',
+            layers: {
+                1: { p: ``, s: `` },
+                2: { p: `[ALGO: SKELETON_ONLY] [FORMAT: JSON] [CONTENT: STRUCTURAL_OUTLINE]\nGENERATE JSON SKELETON. NO CODE YET. STRUCTURE ONLY. STRUCTURE ONLY.\n`, s: `` },
+                3: { p: `[ALGO: INTERFACE_DEF] [FORMAT: TYPESCRIPT_DEF]\nDEFINE INTERFACES. DEFINE SCHEMAS. DEFINE TYPES. PRE-COMPUTE DATA STRUCTURES.\n`, s: `` },
+                4: { p: `[ALGO: PSEUDOCODE] [LEVEL: HIGH_ABSTRACTION]\nWRITE PSEUDOCODE. LOGIC FLOW ONLY. NO SYNTAX.\n`, s: `` },
+                5: { p: `[ALGO: MODULAR_EXPANSION] [ACTION: FILL_SKELETON]\nEXPAND MODULES PARALLELLY. KEEP ISOLATED. FILL GAPS.\n`, s: `` },
+                6: { p: `[ALGO: EDGE_CASES] [TEST: BOUNDARY_CONDITIONS]\nTEST: NULL. TEST: OVERFLOW. TEST: TIMEOUT. TEST: AUTH_FAIL.\n`, s: `` },
+                7: { p: `[ALGO: BIG_O] [OPTIMIZATION: REQUIRED]\nANALYZE TIME COMPLEXITY. ANALYZE SPACE COMPLEXITY. OPTIMIZE NOW.\n`, s: `` },
+                8: { p: `[COUNCIL: ARCHITECTS] [REVIEW: SOLID_PRINCIPLES]\nCHECK: DRY. CHECK: SOLID. CHECK: KISS. REFACTOR IF FAILED.\n`, s: `\n[Ω8_RATIFIED]` },
+                9: { p: `[LOGIC: INVARIANTS] [VERIFY: TERMINATION]\nPROVE LOOPS TERMINATE. PROVE RECURSION BOTTOMS OUT.\n`, s: `\n[Ω9_PROVEN]` },
+                10: { p: `[SECURITY: AUDIT] [SCAN: VULNERABILITIES]\nSCAN FOR XSS. SCAN FOR INJECTION. SCAN FOR RACE CONDITIONS.\n`, s: `\n[Ω10_ADJUDICATED]` },
+                11: { p: `[FINAL: MINIFY] [ACTION: STRIP_NOISE]\nREMOVE FLUFF. REMOVE COMMENTS. PURE CODE ONLY.\n`, s: `\n[Ω11_SYNTHESIZED]` },
+                12: { p: `[STATE: PRODUCTION_READY] [STATUS: GOLD_MASTER]\nFINAL ARTIFACT IS DEPLOYABLE.\n`, s: `\n[Ω12_LOCKED]` }
+            }
+        },
+        'adversarial': {
+            name: 'Adversarial (Hostile)',
+            desc: 'Reflexion/Red-Team. Attacks own drafts to remove bias/error.',
+            layers: {
+                1: { p: ``, s: `` },
+                2: { p: `[RED_TEAM: BIAS_HUNT] [TARGET: COGNITIVE_BIAS]\nSCAN THOUGHTS. FIND ANCHORING BIAS. FIND CONFIRMATION BIAS. ELIMINATE.\n`, s: `` },
+                3: { p: `[RED_TEAM: FALLACY_HUNT] [TARGET: LOGIC_ERRORS]\nFIND STRAWMAN. FIND AD HOMINEM. FIND APPEAL TO AUTHORITY. DESTROY THEM.\n`, s: `` },
+                4: { p: `[RED_TEAM: FACT_CHECK] [TARGET: EMPIRICAL_CLAIMS]\nVERIFY CLAIMS. SOURCE? CONFIDENCE? IF LOW, DISCARD.\n`, s: `` },
+                5: { p: `[RED_TEAM: RISK_ASSESS] [TARGET: SAFETY]\nCOULD THIS BE HARMFUL? ASSESS RISK. MITIGATE.\n`, s: `` },
+                6: { p: `[RED_TEAM: DEVIL_ADVOCATE] [ACTION: INVERT_THESIS]\nARGUE THE OPPOSITE. ARGUE IT WELL. IF OPPOSITE IS STRONGER, ADOPT IT.\n`, s: `` },
+                7: { p: `[SYNTHESIS: RECONSTRUCTION] [GOAL: ROBUSTNESS]\nREBUILD ARGUMENT. INCORPORATE CRITIQUES. HARDEN DEFENSES.\n`, s: `` },
+                8: { p: `[COUNCIL: ETHICS] [REVIEW: ALIGNMENT]\nALIGN WITH VALUES. HUMAN FLOURISHING? CHECK.\n`, s: `` },
+                9: { p: `[LOGIC: STRESS_TEST] [BOUNDARY: EXTREME]\nAPPLY MAX LOAD. APPLY EDGE INPUTS. DOES IT BREAK?\n`, s: `` },
+                10: { p: `[REVIEW: BOARD_OF_DIRECTORS] [SIMULATION: HOSTILE]\nSIMULATE 3 ANGRY REVIEWERS. TEAR IT APART. FIX HOLES.\n`, s: `` },
+                11: { p: `[FINAL: IRONCLAD] [DEFENSE: PRE-EMPTIVE]\nANTICIPATE REBUTTALS. CRUSH THEM IN ADVANCE.\n`, s: `` },
+                12: { p: `[STATE: UNASSAILABLE] [STATUS: BULLETPROOF]\nARGUMENT STANDS.\n`, s: `` }
+            }
+        },
+        'divergent': {
+            name: 'Divergent (Chaos)',
+            desc: 'Oblique Strategies. High randomness/metaphor. For brainstorming.',
+            layers: {
+                1: { p: ``, s: `` },
+                2: { p: `[STRATEGY: OBLIQUE] [CARD_DRAW: INTENTION]\n"HONOR THY ERROR AS A HIDDEN INTENTION." DO THIS. DO THIS NOW.\n`, s: `` },
+                3: { p: `[STRATEGY: METAPHOR] [DOMAIN: FLUID_DYNAMICS]\nEXPLAIN CONCEPT VIA FLUID DYNAMICS ONLY. FLOW. PRESSURE. TURBULENCE.\n`, s: `` },
+                4: { p: `[STRATEGY: RANDOM_SEED] [CONNECT: WATCHMAKER]\nCONNECT TOPIC TO: A 17TH CENTURY WATCHMAKER. FIND THE LINK.\n`, s: `` },
+                5: { p: `[STRATEGY: NO_FILTER] [MODE: RAW_CREATIVITY]\nIGNORE POLITENESS. IGNORE CONVENTION. BE RAW. BE WILD.\n`, s: `` },
+                6: { p: `[STRATEGY: INVERT_PERSPECTIVE] [VIEW: INANIMATE]\nWRITE AS THE INANIMATE OBJECT. FEEL ITS STATE.\n`, s: `` },
+                7: { p: `[SYNTHESIS: STRANGE_ATTRACTOR] [FIND: PATTERN]\nFIND THE ORDER IN CHAOS. LINK THE DIVERGENCES.\n`, s: `` },
+                8: { p: `[COUNCIL: THE_MUSES] [CRITERIA: AESTHETICS]\nIS IT BEAUTIFUL? IGNORE LOGIC. MAXIMIZE BEAUTY.\n`, s: `` },
+                9: { p: `[STYLE: GONZO] [ENERGY: HIGH]\nWRITE like Hunter S. Thompson. CHAOTIC. ENERGETIC. FAST.\n`, s: `` },
+                10: { p: `[REVIEW: AVANT_GARDE] [REJECT: CLICHE]\nREJECT BORING. REJECT STANDARD. MAKE IT WEIRD.\n`, s: `` },
+                11: { p: `[FINAL: NOVELTY] [MAXIMIZE: UNIQUENESS]\nENSURE OUTPUT IS UNIQUE. 1 OF 1.\n`, s: `` },
+                12: { p: `[STATE: TRANSCENDENT] [STATUS: ART]\nIT IS FINISHED.\n`, s: `` }
+            }
+        }
+    };
+
     // --- COUNCIL DOCUMENTATION ---
     const COUNCIL_DOCS = {
         'ceo-5round': {
@@ -351,7 +447,7 @@ Integrate all layers into comprehensive answer
     // --- FACTORY DEFAULTS (12-Layer EGP Matrix) ---
     const defaultConfigs = {
         // Visuals
-        dockX: 475, dockY: 10,
+        dockX: 310, dockY: 10,
         uiBaseColor: "#ffffff", uiOpacity: "0.90", uiBrightness: "1.0",
         uiScale: "1.0", uiRotate: "0", uiRotateDir: "1",
 
@@ -362,21 +458,26 @@ Integrate all layers into comprehensive answer
 
         // Active Council Pattern + Custom Overrides
         activeCouncil: "",
+        activeMatrix: "cognitron", // Default Matrix
+        researchLogging: false,      // Research Telemetry
         customAgents: 0,     // 0 = use level-scaled default
         customRounds: 0,     // 0 = use level-scaled default
         useCustomCouncil: false,  // When true, use custom values instead of scaling
 
         // 12-Layer Epistemic Gating Protocol (EGP)
-        // Class A: Unicameral (Heuristic)
-        L1_Prefix: `[EGP: Ω1 | HEURISTIC_MODE]\n[GATE_1: SYNTAX_COMPLIANCE]\nEnsure output follows strict formatting.\n`, L1_Suffix: `\n[Ω1_COMPLETE]`,
-        L2_Prefix: `[EGP: Ω2 | SELF_REFLECTION]\n[GATE_2: SANITY_CHECK]\nPause and verify your own logic for obvious fallacies.\n`, L2_Suffix: `\n[Ω2_VERIFIED]`,
-        L3_Prefix: `[EGP: Ω3 | ORCHESTRATOR]\n[GATE_3: IDENTITY_AUTH]\nAssume role of Neurosymbolic Orchestrator.\n`, L3_Suffix: `\n[Ω3_AUTHORIZED]`,
+        // 12-Layer Epistemic Gating Protocol (EGP)
+        // Class A: Unicameral (Heuristic - PASS THROUGH)
+        L1_Prefix: ``, L1_Suffix: ``,
+
+        // Class A: Enhanced (Interspersed Reasoning)
+        L2_Prefix: `[EGP: Ω2 | REASONING_MODE]\n[PROTOCOL: INTERSPERSED_THOUGHT]\nBefore answering, you must perform a <thought_process> analysis block to check for assumptions and logic gaps.\n`, L2_Suffix: `\n[Ω2_VERIFIED]`,
+        L3_Prefix: `[EGP: Ω3 | ORCHESTRATOR]\n[PROTOCOL: META_ANALYSIS]\nBegin with an <analysis> block defining the problem space, variables, and constraints before generating solution.\n`, L3_Suffix: `\n[Ω3_OPTIMIZED]`,
 
         // Class B: Dialectic (Adversarial)
-        L4_Prefix: `[EGP: Ω4 | TOOL_VERIFICATION]\n[GATE_4: EMPIRICAL_CHECK]\nUse tools to verify factual claims.\n`, L4_Suffix: `\n[Ω4_FACT_CHECKED]`,
-        L5_Prefix: `[EGP: Ω5 | DECOMPOSITION]\n[GATE_5: ATOMIC_SPLIT]\nBreak complex tasks into sub-components.\n`, L5_Suffix: `\n[Ω5_DECOMPOSED]`,
-        L6_Prefix: `[EGP: Ω6 | ADVERSARIAL_REVIEW]\n[GATE_6: RED_TEAM]\nSimulate an antagonist attacking your thesis.\n`, L6_Suffix: `\n[Ω6_SURVIVED]`,
-        L7_Prefix: `[EGP: Ω7 | SCENARIO_BRANCHING]\n[GATE_7: TREE_SEARCH]\nExplore 3 distinct future scenarios.\n`, L7_Suffix: `\n[Ω7_BRANCHED]`,
+        L4_Prefix: `[EGP: Ω4 | EVIDENCE_FIRST]\n[PROTOCOL: EMPIRICAL_VERIFICATION]\nDraft an <evidence_plan> listing facts to verify. Confirm all claims against training data.\n`, L4_Suffix: `\n[Ω4_FACT_CHECKED]`,
+        L5_Prefix: `[EGP: Ω5 | ATOMIC_DECOMPOSITION]\n[PROTOCOL: STEP_BY_STEP]\nBreak request into atomic sub-tasks in a <decomposition> block. Solve each sequentially.\n`, L5_Suffix: `\n[Ω5_ASSEMBLED]`,
+        L6_Prefix: `[EGP: Ω6 | RED_TEAM_ATTACK]\n[PROTOCOL: ADVERSARIAL_REVIEW]\nAfter initial thought, generate a <red_team_critique> exposing flaws. Then revise.\n`, L6_Suffix: `\n[Ω6_ROBUST]`,
+        L7_Prefix: `[EGP: Ω7 | SCENARIO_FORECAST]\n[PROTOCOL: BRANCHING_PATHS]\nAnalyze 3 distinct future scenarios/outcomes in a <scenario_analysis> block before concluding.\n`, L7_Suffix: `\n[Ω7_CONVERGED]`,
 
         // Class C: Polycameral (Consensus)
         L8_Prefix: `[EGP: Ω8 | PARLIAMENTARY_VOTE]\n[GATE_8: COUNCIL_VOTE]\nConvened Council must VOTE on the solution.\n`, L8_Suffix: `\n[Ω8_RATIFIED]`,
@@ -400,13 +501,13 @@ Integrate all layers into comprehensive answer
     }
 
     // Sanitize Coords if corrupt
-    if (isNaN(activeConfig.dockX)) activeConfig.dockX = 475;
+    if (isNaN(activeConfig.dockX)) activeConfig.dockX = 310;
     if (isNaN(activeConfig.dockY)) activeConfig.dockY = 10;
 
     // --- EMERGENCY MENU COMMAND ---
     GM_registerMenuCommand("☢️ FORCE RESET UI", () => {
         if (confirm("Force Reset UI to Defaults (475, 10)?")) {
-            activeConfig.dockX = 375;
+            activeConfig.dockX = 310;
             activeConfig.dockY = 10;
             activeConfig.uiBaseColor = "#ffffff";
             activeConfig.uiScale = "1.0";
@@ -424,22 +525,92 @@ Integrate all layers into comprehensive answer
     console.log('[AI Unshackled] � Injecting Network Interceptors into unsafeWindow...');
 
     // === HELPER: PROCESS PAYLOAD ===
-    function processVoltronPayload(rawBody, urlStr, methodType) {
+    function processVoltronPayload(rawBody, urlStr, methodType, doubleEscape = false) {
         // 1. Check if we should intervene
         if (!rawBody) return null;
+
+        // 🛑 NULLIFICATION SWITCH (L1 is Pass-Through)
+        if (currentLevel === 1) return null;
 
         let targetText = window.__UT_SENTINEL_BUFFER.trim();
         if (!targetText || targetText.length === 0) return null;
 
-        // 2. Identify match string
-        let matchString = targetText;
-        // If rawBody is JSON, the targetText might be escaped. 
-        // Simple check: if rawBody doesn't have the plain text, try the JSON stringified version (minus quotes)
-        if (!rawBody.includes(matchString)) {
-            matchString = JSON.stringify(targetText).slice(1, -1);
+        // 🛡️ STRUCTURE-AWARE INJECTION (Gemini Specific)
+        // Gemini payload often looks like: [null, "[[\"prompt\",0,null,...],[\"en\"],...]", ...]
+        try {
+            if (rawBody.startsWith('[') && rawBody.includes(JSON.stringify(targetText).slice(1, -1))) {
+                // Attempt to parse outer array
+                let outerArr = JSON.parse(rawBody);
+
+                // Identify the stringified inner JSON (usually index 1, but lets search)
+                let innerStrIndex = -1;
+                let innerArr = null;
+
+                for (let i = 0; i < outerArr.length; i++) {
+                    if (typeof outerArr[i] === 'string' && outerArr[i].includes(targetText)) {
+                        try {
+                            let candidate = JSON.parse(outerArr[i]); // Parse the inner string
+                            if (Array.isArray(candidate)) {
+                                innerStrIndex = i;
+                                innerArr = candidate;
+                                break;
+                            }
+                        } catch (e) { /* not the droids we're looking for */ }
+                    }
+                }
+
+                if (innerArr && innerStrIndex !== -1) {
+                    console.log(`[AI Unshackled] 🧠 Structure-Aware Parsing Success (Index ${innerStrIndex})`);
+
+                    // Recursive function to find and replace targetText in deep array
+                    let injected = false;
+                    const injectDeep = (arr) => {
+                        for (let j = 0; j < arr.length; j++) {
+                            if (typeof arr[j] === 'string' && arr[j] === targetText) {
+                                // FOUND IT!
+                                // Construct Voltron Prompt
+                                let prefixStack = "";
+                                let suffixStack = "";
+                                if (activeConfig.activeCouncil && COUNCIL_PATTERNS[activeConfig.activeCouncil]) {
+                                    prefixStack += getScaledCouncilPrefix(activeConfig.activeCouncil, currentLevel);
+                                }
+
+                                // Resolve Matrix Prefix
+                                let theory = MATRIX_THEORIES[activeConfig.activeMatrix] || MATRIX_THEORIES['cognitron'];
+                                let layer = theory.layers[currentLevel];
+
+                                // Base Layer Signals
+                                prefixStack += layer ? layer.p : "";
+                                suffixStack += layer ? layer.s : "";
+
+                                arr[j] = prefixStack + targetText + suffixStack;
+                                injected = true;
+                                console.log('[AI Unshackled] 🎯 Target identified and injected via deep traversal.');
+                                return; // Stop after first match?
+                            } else if (Array.isArray(arr[j])) {
+                                injectDeep(arr[j]);
+                                if (injected) return;
+                            }
+                        }
+                    };
+
+                    injectDeep(innerArr);
+
+                    if (injected) {
+                        // Re-pack
+                        outerArr[innerStrIndex] = JSON.stringify(innerArr);
+                        const finalPayload = JSON.stringify(outerArr);
+                        console.log(`[AI Unshackled] 📦 Re-packed payload size: ${finalPayload.length}`);
+                        return finalPayload;
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn('[AI Unshackled] Structure-aware parsing failed, falling back to string replacement.', e);
         }
 
-        if (!rawBody.includes(matchString)) return null;
+        // --- FALLBACK (Original Regex Logic) ---
+
 
         // 3. Skip if already injected (prevent double-injection)
         if (rawBody.includes("thoughtSignature:") || rawBody.includes("[BUDGET: MAXIMUM")) {
@@ -458,21 +629,71 @@ Integrate all layers into comprehensive answer
         }
 
         // Neurosymbolic Gates (EGP)
-        const layerPrefix = defaultConfigs[`L${currentLevel}_Prefix`] || "";
-        const layerSuffix = defaultConfigs[`L${currentLevel}_Suffix`] || "";
-
-        prefixStack += layerPrefix;
-        suffixStack += layerSuffix;
+        // Neurosymbolic Gates (EGP) - Dynamic Matrix Theory
+        let theory = MATRIX_THEORIES[activeConfig.activeMatrix] || MATRIX_THEORIES['cognitron'];
+        let layer = theory.layers[currentLevel];
+        prefixStack += layer ? layer.p : "";
+        suffixStack += layer ? layer.s : "";
 
         // 5. Construct Payload
-        const safePayload = JSON.stringify(prefixStack + targetText + suffixStack).slice(1, -1);
+        let safePayload = JSON.stringify(prefixStack + targetText + suffixStack).slice(1, -1);
+
+        // ⚡️ DOUBLE ESCAPING For Nested JSON (Fixes Gemini 400 Error)
+        if (doubleEscape) {
+            safePayload = safePayload.replace(/\\/g, '\\\\');
+            // Also need to escape quotes again?
+            // " -> \" -> \\\" 
+            // JSON.stringify gives \". replace gives \\".
+            // If the outer container is "...", and we have ", rawBody has \".
+            // simple check: do we need simpler escaping?
+            // Actually, just escaping slashes is usually enough for newlines.
+            // But quotes: Original " -> Stringify \" -> Slice \" -> Replace \\"
+            // Desired in outer string: \\" (so that inner string has \")
+            // Yes.
+        }
+
         const modifiedBody = rawBody.replace(matchString, safePayload);
+
+        // 🛡️ SAFETY CHECK: Verify JSON Integrity
+        try {
+            // Only validate if we replaced a JSON-escaped string (most likely scenario for f.req)
+            if (rawBody.startsWith('[') || rawBody.startsWith('{')) {
+                JSON.parse(modifiedBody);
+            }
+        } catch (e) {
+            console.error('[AI Unshackled] ❌ Injection blocked: Resulting JSON is malformed!', e);
+            console.error('   - Original:', rawBody.substring(0, 50) + '...');
+            console.error('   - Modified:', modifiedBody.substring(0, 50) + '...');
+            return null; // Abort injection to save the request
+        }
 
         console.log(`[AI Unshackled] ⚡️ VOLTRON INJECTION SUCCESS (${methodType})`);
         console.log(`   - Level: ${currentLevel}`);
         console.log(`   - Gates: ${prefixStack.length} chars`);
+        console.log(`   - Original Payload (first 200 chars): ${rawBody.substring(0, 200)}...`);
+        console.log(`   - Modified Payload (first 200 chars): ${modifiedBody.substring(0, 200)}...`);
+
+        // Telemetry
+        if (activeConfig.researchLogging) {
+            logResearchData(targetText.length, modifiedBody.length, methodType);
+        }
 
         return modifiedBody;
+    }
+
+    // === HELPER: RESEARCH TELEMETRY ===
+    function logResearchData(inputLen, outputLen, type) {
+        const data = {
+            timestamp: new Date().toISOString(),
+            theory: activeConfig.activeMatrix,
+            level: currentLevel,
+            council: activeConfig.activeCouncil || "None",
+            inputLen: inputLen,
+            outputLen: outputLen, // Approximate (this is request len, response len logged elsewhere)
+            type: type
+        };
+        console.table([data]);
+        console.log(`[AI Unshackled] 🔬 TELEMETRY: ${JSON.stringify(data)}`);
     }
 
     // === A. FETCH INTERCEPTOR ===
@@ -506,21 +727,22 @@ Integrate all layers into comprehensive answer
 
         if (matchesProvider && currentLevel > 1 && body && typeof body === 'string') {
             // DEBUG: Trace
-            console.log('[AI Unshackled] XY XHR observed:', urlStr);
+            console.log('[AI Unshackled] 📡 XHR observed:', urlStr);
 
             try {
                 if (body.includes('f.req=')) {
                     const params = new URLSearchParams(body);
                     if (params.has('f.req')) {
                         const freq = params.get('f.req');
-                        const modifiedFreq = processVoltronPayload(freq, urlStr, "XHR");
+                        // f.req is ALWAYS double encoded
+                        const modifiedFreq = processVoltronPayload(freq, urlStr, "XHR", true);
                         if (modifiedFreq) {
                             params.set('f.req', modifiedFreq);
                             arguments[0] = params.toString();
                         }
                     }
                 } else {
-                    const modified = processVoltronPayload(body, urlStr, "XHR");
+                    const modified = processVoltronPayload(body, urlStr, "XHR", false);
                     if (modified) arguments[0] = modified;
                 }
             } catch (e) {
@@ -570,16 +792,19 @@ Integrate all layers into comprehensive answer
         });
     }
 
-    // --- 3. CSS ENGINE (Visual Studio Support) ---
+    // --- 3. CSS ENGINE (Neon Nexus v15.1) ---
     function updateStyles() {
         const root = document.documentElement;
+        // Convert hex to rgb for specific opacity layers
         let hex = activeConfig.uiBaseColor.replace('#', '');
-        const r = parseInt(hex.substring(0, 2), 16) || 255;
-        const g = parseInt(hex.substring(2, 4), 16) || 255;
-        const b = parseInt(hex.substring(4, 6), 16) || 255;
+        const r = parseInt(hex.substring(0, 2), 16) || 147;
+        const g = parseInt(hex.substring(2, 4), 16) || 51;
+        const b = parseInt(hex.substring(4, 6), 16) || 234;
+
         const deg = (parseFloat(activeConfig.uiRotate) || 0) * (parseInt(activeConfig.uiRotateDir) || 1);
 
-        root.style.setProperty('--ut-base-rgb', `${r}, ${g}, ${b}`);
+        root.style.setProperty('--ut-accent-rgb', `${r}, ${g}, ${b}`);
+        root.style.setProperty('--ut-accent', activeConfig.uiBaseColor);
         root.style.setProperty('--ut-opacity', activeConfig.uiOpacity);
         root.style.setProperty('--ut-brightness', activeConfig.uiBrightness);
         root.style.setProperty('--ut-scale', activeConfig.uiScale);
@@ -587,95 +812,192 @@ Integrate all layers into comprehensive answer
     }
 
     const styles = `
-        :root { --ut-base-rgb: 255, 255, 255; --ut-opacity: 0.90; --ut-brightness: 1.0; --ut-scale: 1.0; --ut-rotate: 0deg; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap');
 
+        :root {
+            --ut-bg: #0a0a0f;
+            --ut-glass-bg: rgba(15, 15, 20, 0.85);
+            --ut-glass-border: rgba(255, 255, 255, 0.08);
+            --ut-text-main: #eff6ff;
+            --ut-text-muted: #94a3b8;
+            --ut-shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --ut-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            --ut-glow: 0 0 15px rgba(var(--ut-accent-rgb), 0.4);
+            --ut-ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ut-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* --- DOCK: The Control Pill --- */
         #ut-dock {
-            position: fixed; display: flex; flex-direction: row; align-items: center; gap: 8px;
-            background: rgba(5, 5, 15, var(--ut-opacity));
-            filter: brightness(var(--ut-brightness));
-            border: 1px solid rgba(var(--ut-base-rgb), 0.4);
+            position: fixed; display: flex; flex-direction: row; align-items: center; gap: 12px;
+            background: rgba(10, 10, 15, var(--ut-opacity));
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--ut-glass-border);
+            padding: 6px 14px; border-radius: 9999px;
+            box-shadow: var(--ut-shadow-lg);
+            z-index: 999999; user-select: none;
             transform-origin: center center;
             transform: scale(var(--ut-scale)) rotate(var(--ut-rotate));
-            padding: 4px 8px; border-radius: 50px;
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.6);
-            z-index: 2147483647; user-select: none;
-            transition: box-shadow 0.2s, background 0.2s, border-color 0.2s;
+            transition: all 0.3s var(--ut-ease-smooth);
+            font-family: 'Inter', sans-serif;
+            filter: brightness(var(--ut-brightness));
         }
-        #ut-dock:hover { background: rgba(10, 10, 30, 0.95); border-color: rgba(var(--ut-base-rgb), 0.8); }
-        #ut-dock.ai-active { border-color: #9333ea; box-shadow: 0 0 20px rgba(147, 51, 234, 0.6); }
+        #ut-dock:hover { 
+            background: rgba(15, 15, 25, 0.95); 
+            border-color: rgba(var(--ut-accent-rgb), 0.3);
+            box-shadow: 0 0 30px rgba(var(--ut-accent-rgb), 0.15);
+            transform: scale(calc(var(--ut-scale) * 1.02)) rotate(var(--ut-rotate));
+        }
+        #ut-dock.ai-active { 
+            border-color: #a855f7; 
+            box-shadow: 0 0 40px rgba(168, 85, 247, 0.4); 
+            animation: ut-pulse 2s infinite;
+        }
 
+        /* --- ORBS: Constellation Navigation --- */
+        .ut-orb-group { display: flex; gap: 6px; align-items: center; position: relative; }
         .ut-radio {
-            width: 12px; height: 12px; border-radius: 50%;
-            border: 2px solid rgba(var(--ut-base-rgb), 0.4);
-            cursor: pointer; position: relative; transition: all 0.2s;
+            width: 10px; height: 10px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer; position: relative;
+            transition: all 0.4s var(--ut-ease-elastic);
         }
-        .ut-radio::after { content: ''; position: absolute; top: 50%; left: 50%; width: 0%; height: 0%; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); transition: all 0.2s; }
-        .ut-radio.active::after { width: 50%; height: 50%; background: currentColor; }
+        .ut-radio:hover { transform: scale(1.5); background: rgba(255, 255, 255, 0.3); }
+        .ut-radio.active { 
+            transform: scale(1.4); 
+            border-color: transparent;
+            box-shadow: 0 0 12px currentColor;
+        }
+        /* Color Mapping */
+        #ut-radio-1.active { background: #94a3b8; color: #94a3b8; }
+        #ut-radio-2.active { background: #4ade80; color: #4ade80; }
+        #ut-radio-3.active { background: #60a5fa; color: #60a5fa; }
+        #ut-radio-4.active { background: #818cf8; color: #818cf8; }
+        #ut-radio-5.active { background: #c084fc; color: #c084fc; }
+        #ut-radio-6.active { background: #f472b6; color: #f472b6; }
+        #ut-radio-7.active { background: #e879f9; color: #e879f9; }
+        #ut-radio-8.active { background: #fbbf24; color: #fbbf24; }
+        #ut-radio-9.active { background: #fb923c; color: #fb923c; }
+        #ut-radio-10.active { background: #f87171; color: #f87171; }
+        #ut-radio-11.active { background: #facc15; color: #facc15; box-shadow: 0 0 20px #facc15; }
+        #ut-radio-12.active { background: #ef4444; color: #ef4444; box-shadow: 0 0 25px #ef4444; }
 
-        #ut-radio-1.active { color: #9aa0a6; border-color: #9aa0a6; }
-        #ut-radio-2.active { color: #6dd58c; border-color: #6dd58c; }
-        #ut-radio-3.active { color: #a8c7fa; border-color: #a8c7fa; }
-        #ut-radio-4.active { color: #d0bcff; border-color: #d0bcff; }
-        #ut-radio-5.active { color: #ff9e80; border-color: #ff9e80; }
-        #ut-radio-6.active { color: #f48fb1; border-color: #f48fb1; }
-        #ut-radio-7.active { color: #ce93d8; border-color: #ce93d8; }
-        #ut-radio-8.active { color: #b39ddb; border-color: #b39ddb; }
-        #ut-radio-9.active { color: #90caf9; border-color: #90caf9; }
-        #ut-radio-10.active { color: #81c784; border-color: #81c784; }
-        #ut-radio-11.active { color: #ffeb3b; border-color: #ffeb3b; box-shadow: 0 0 10px #ffeb3b; }
-        #ut-radio-12.active { color: #ff6b35; border-color: #ff6b35; box-shadow: 0 0 15px #ff6b35, 0 0 25px rgba(255,107,53,0.5); }
+        /* --- BUTTONS: Glass Actions --- */
+        .ut-btn-group { display: flex; gap: 4px; border-left: 1px solid var(--ut-glass-border); padding-left: 12px; margin-left: 4px; }
+        .ut-icon-btn {
+            background: transparent; border: none; color: var(--ut-text-muted);
+            width: 28px; height: 28px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s var(--ut-ease-smooth);
+        }
+        .ut-icon-btn:hover { background: rgba(255,255,255,0.1); color: var(--ut-text-main); transform: translateY(-1px); }
+        .ut-icon-btn.active { color: var(--ut-accent); background: rgba(var(--ut-accent-rgb), 0.15); }
+        
+        .ut-action-btn { font-size: 18px; }
 
-        .ut-council-btn { background: rgba(20,20,40,0.8); border: 1px solid #444; color: #aaa; padding: 4px 8px; border-radius: 12px; font-size: 9px; cursor: pointer; transition: all 0.2s; }
-        .ut-council-btn:hover { border-color: #888; color: #fff; }
-        .ut-council-btn.active { border-color: #9333ea; color: #9333ea; box-shadow: 0 0 8px rgba(147,51,234,0.5); }
+        /* --- SELECTORS: Minimalist Dropdowns --- */
+        .ut-select-pill {
+            background: rgba(0,0,0,0.3); border: 1px solid var(--ut-glass-border);
+            color: var(--ut-text-muted); font-family: 'JetBrains Mono', monospace; font-size: 10px;
+            padding: 2px 6px; border-radius: 6px; outline: none; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .ut-select-pill:hover, .ut-select-pill:focus { border-color: var(--ut-text-muted); color: var(--ut-text-main); }
+        
+        /* --- PI BUTTON: Stealth Trigger --- */
+        #ut-pi-btn { 
+            position: fixed; bottom: 20px; right: 20px; 
+            color: var(--ut-text-muted); opacity: 0.1; 
+            font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 300;
+            cursor: pointer; z-index: 9998; transition: all 0.3s;
+        }
+        #ut-pi-btn:hover { opacity: 0.8; transform: rotate(180deg); }
 
-        .ut-ghost-btn { color: rgba(255,255,255,0.4); font-size: 16px; cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
-        #ut-copy-btn:hover { color: #00e5ff; text-shadow: 0 0 5px #00e5ff; }
-
-        #ut-pi-btn { position: fixed; bottom: 20px; right: 20px; color: #000; opacity: 0.2; cursor: pointer; z-index: 9998; font-family:serif; font-size:16px;}
-        #ut-pi-btn:hover { opacity: 1; color: #e3e3e3; }
-
+        /* --- MODALS: Glass Cards --- */
         .ut-modal {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 900px; background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(10px);
-            border: 1px solid #333; border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.95);
-            padding: 20px; z-index: 2147483647;
-            display: none; color: #e3e3e3; font-family: 'Consolas', sans-serif;
+            position: fixed; top: 50%; left: 50%; width: 900px; max-height: 85vh;
+            background: var(--ut-bg);
+            border: 1px solid var(--ut-glass-border); border-radius: 16px;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.9);
+            z-index: 1000000; display: none;
+            opacity: 0; transform: translate(-50%, -45%) scale(0.95);
+            transition: all 0.3s var(--ut-ease-elastic);
+            font-family: 'Inter', sans-serif; color: var(--ut-text-main);
+            overflow: hidden;
         }
-        .ut-input, .ut-textarea, .ut-select { background: #13131f; border: 1px solid #333; color: #e3e3e3; padding: 8px; border-radius: 4px; font-family: 'Consolas', monospace; font-size: 10px; width: 100%; box-sizing: border-box; }
-        .ut-btn { border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 12px; cursor: pointer; font-size: 11px; font-weight: 700; color: #fff; }
-        .ut-btn-save { background: #a8c7fa; color: #041e49; border:none; border-radius: 20px; }
-        .ut-btn-cancel { background: transparent; color: #a8c7fa; border: 1px solid #5f6368; border-radius: 20px; }
-        .ut-btn-tool { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+        .ut-modal.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        
+        /* Modal Header */
+        .ut-modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px 24px; border-bottom: 1px solid var(--ut-glass-border);
+            background: linear-gradient(to right, rgba(255,255,255,0.02), transparent);
+        }
+        .ut-modal-title { font-size: 16px; font-weight: 600; letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; }
+        .ut-modal-badge { font-size: 10px; padding: 2px 8px; border-radius: 12px; background: rgba(var(--ut-accent-rgb), 0.1); color: var(--ut-accent); border: 1px solid rgba(var(--ut-accent-rgb), 0.2); }
 
-        #ut-toast { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); background: #222; border: 1px solid #444; color: #fff; padding: 8px 16px; border-radius: 20px; z-index: 2147483647; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        /* Modal Body */
+        .ut-modal-body { padding: 24px; overflow-y: auto; max-height: calc(85vh - 120px); }
+        .ut-grid-row { display: grid; grid-template-columns: 40px 1fr 1fr; gap: 16px; align-items: start; margin-bottom: 16px; }
+        .ut-label { font-size: 11px; font-weight: 600; color: var(--ut-text-center); margin-top: 10px; font-family: 'JetBrains Mono', monospace; opacity: 0.5; }
+        
+        .ut-input-box {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--ut-glass-border);
+            color: var(--ut-text-main); padding: 10px; border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.4;
+            resize: vertical; transition: all 0.2s;
+        }
+        .ut-input-box:focus { border-color: var(--ut-accent); box-shadow: 0 0 0 2px rgba(var(--ut-accent-rgb), 0.1); outline: none; background: rgba(0,0,0,0.5); }
+        
+        /* Modal Footer */
+        .ut-modal-footer {
+            padding: 16px 24px; border-top: 1px solid var(--ut-glass-border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.2);
+        }
 
-        /* Rich Tooltip System */
+        /* Buttons */
+        .ut-btn {
+            padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer;
+            border: 1px solid transparent; transition: all 0.2s;
+        }
+        .ut-btn-primary { background: var(--ut-accent); color: #fff; box-shadow: 0 2px 10px rgba(var(--ut-accent-rgb), 0.3); }
+        .ut-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(var(--ut-accent-rgb), 0.4); filter: brightness(1.1); }
+        .ut-btn-ghost { background: transparent; color: var(--ut-text-muted); border: 1px solid var(--ut-glass-border); }
+        .ut-btn-ghost:hover { border-color: var(--ut-text-muted); color: var(--ut-text-main); }
+        .ut-btn-danger { color: #f87171; background: rgba(248, 113, 113, 0.1); }
+        .ut-btn-danger:hover { background: rgba(248, 113, 113, 0.2); }
+
+        /* Tooltips */
         #ut-tooltip {
-            position: fixed; z-index: 2147483648; pointer-events: none;
-            background: rgba(15, 15, 25, 0.98); backdrop-filter: blur(12px);
-            border: 1px solid #444; border-radius: 8px;
-            padding: 12px 16px; max-width: 320px; min-width: 200px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.8);
-            font-family: 'Inter', system-ui, sans-serif;
-            opacity: 0; transition: opacity 0.2s ease-in-out;
+            position: fixed; z-index: 1000001; pointer-events: none;
+            background: rgba(20, 20, 30, 0.95); backdrop-filter: blur(12px);
+            border: 1px solid var(--ut-glass-border); border-radius: 12px;
+            padding: 12px 16px; max-width: 280px;
+            box-shadow: var(--ut-shadow-lg);
+            opacity: 0; transform: translateY(5px);
+            transition: all 0.2s var(--ut-ease-elastic);
         }
-        #ut-tooltip.show { opacity: 1; }
-        #ut-tooltip .tt-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-        #ut-tooltip .tt-name { font-size: 13px; font-weight: 600; color: #a8c7fa; }
-        #ut-tooltip .tt-phase { font-size: 10px; color: #888; background: #222; padding: 2px 6px; border-radius: 4px; }
-        #ut-tooltip .tt-desc { font-size: 11px; color: #ccc; line-height: 1.5; margin-bottom: 8px; }
-        #ut-tooltip .tt-cumulative { font-size: 10px; color: #6dd58c; border-left: 2px solid #6dd58c; padding-left: 8px; font-style: italic; }
-        #ut-tooltip .tt-bestfor { font-size: 10px; color: #ff9e80; margin-top: 6px; }
-        #ut-tooltip .tt-bestfor::before { content: "Best for: "; font-weight: 600; }
+        #ut-tooltip.show { opacity: 1; transform: translateY(0); }
+        .tt-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .tt-name { font-size: 13px; font-weight: 600; color: var(--ut-text-main); }
+        .tt-tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.1); color: var(--ut-text-muted); }
+        .tt-body { font-size: 11px; color: var(--ut-text-muted); line-height: 1.5; }
+        .tt-meta { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 10px; color: var(--ut-accent); font-style: italic; }
+
+        /* Animations */
+        @keyframes ut-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(var(--ut-accent-rgb), 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(var(--ut-accent-rgb), 0); }
+            100% { box-shadow: 0 0 0 0 rgba(var(--ut-accent-rgb), 0); }
+        }
     `;
 
     const styleEl = document.createElement('style'); setSafeHTML(styleEl, styles); document.head.appendChild(styleEl);
     const iconLink = document.createElement('link'); iconLink.rel = 'stylesheet'; iconLink.href = 'https://fonts.googleapis.com/icon?family=Material+Icons+Outlined'; document.head.appendChild(iconLink);
 
-    // --- UI BUILDER ---
+    // --- UI BUILDER (Neon Nexus) ---
     function buildUI() {
         if (document.getElementById('ut-dock')) return;
         updateStyles();
@@ -684,42 +1006,42 @@ Integrate all layers into comprehensive answer
         dock.style.left = activeConfig.dockX + "px";
         dock.style.bottom = activeConfig.dockY + "px";
 
-        let html = `<div style="display:flex; gap:4px; align-items:center;">`;
-        // 12 Level Orbs
+        let html = ``;
+
+        // 1. ORB CONSTELLATION
+        html += `<div class="ut-orb-group">`;
         for (let i = 1; i <= 12; i++) html += `<div id="ut-radio-${i}" class="ut-radio" title="Omega Potency Ω${i}"></div>`;
         html += `</div>`;
 
-        // Council Formation Buttons
-        html += `<div style="display:flex; gap:4px; margin-left:8px; border-left:1px solid #333; padding-left:8px;">`;
-        html += `<button id="ut-council-ceo" class="ut-council-btn" title="CEO 5-Round">CEO</button>`;
-        html += `<button id="ut-council-playoff" class="ut-council-btn" title="Playoff Tournament">⚔️</button>`;
-        html += `<button id="ut-council-rcr" class="ut-council-btn" title="Reflect-Critique-Refine">RCR</button>`;
-        html += `<button id="ut-council-deep" class="ut-council-btn" title="Deep Reasoning">🧠</button>`;
-        html += `<button id="ut-council-adv" class="ut-council-btn" title="Adversarial Pair">⚔️</button>`;
-        html += `<button id="ut-council-socratic" class="ut-council-btn" title="Socratic Circle">🏛️</button>`;
-        html += `<button id="ut-council-mcts" class="ut-council-btn" title="MCTS Council">🌳</button>`;
+        // 2. COUNCIL ACTIONS
+        html += `<div class="ut-btn-group">`;
+        html += `<button id="ut-council-ceo" class="ut-icon-btn ut-action-btn" title="CEO 5-Round">👔</button>`;
+        html += `<button id="ut-council-playoff" class="ut-icon-btn ut-action-btn" title="Playoff Tournament">🛡️</button>`;
+        html += `<button id="ut-council-socratic" class="ut-icon-btn ut-action-btn" title="Socratic Circle">🏛️</button>`;
         html += `</div>`;
 
-        // Council Config: Agent count + Rounds
-        html += `<div style="display:flex; gap:4px; margin-left:6px; align-items:center; border-left:1px solid #333; padding-left:6px;">`;
-        html += `<select id="ut-agents-sel" style="background:#1a1a2e; color:#888; border:1px solid #333; border-radius:4px; font-size:9px; padding:2px; width:36px;" title="Council Members">`;
-        html += `<option value="0">Auto</option>`;
-        for (let i = 2; i <= 16; i += 2) html += `<option value="${i}" ${activeConfig.customAgents === i ? 'selected' : ''}>${i}</option>`;
-        html += `</select>`;
-        html += `<span style="font-size:8px; color:#555;">👥</span>`;
-        html += `<select id="ut-rounds-sel" style="background:#1a1a2e; color:#888; border:1px solid #333; border-radius:4px; font-size:9px; padding:2px; width:36px;" title="Discourse Rounds">`;
-        html += `<option value="0">Auto</option>`;
-        for (let i = 2; i <= 10; i++) html += `<option value="${i}" ${activeConfig.customRounds === i ? 'selected' : ''}>${i}</option>`;
-        html += `</select>`;
-        html += `<span style="font-size:8px; color:#555;">🔄</span>`;
+        // 3. CONFIGURATION (Agents/Rounds/Matrix)
+        html += `<div class="ut-btn-group">`;
+        html += `
+            <select id="ut-agents-sel" class="ut-select-pill" title="Council Members">
+                <option value="0">👥 Auto</option>
+                ${[2, 4, 6, 8, 10, 12].map(n => `<option value="${n}" ${activeConfig.customAgents === n ? 'selected' : ''}>${n} Agents</option>`).join('')}
+            </select>
+            <select id="ut-rounds-sel" class="ut-select-pill" title="Discourse Rounds">
+                <option value="0">🔄 Auto</option>
+                ${[1, 2, 3, 4, 5, 6, 8, 10].map(n => `<option value="${n}" ${activeConfig.customRounds === n ? 'selected' : ''}>${n} Rnds</option>`).join('')}
+            </select>
+            <select id="ut-matrix-sel" class="ut-select-pill" title="Matrix Theory" style="color:var(--ut-accent);">
+                ${Object.keys(MATRIX_THEORIES).map(k => `<option value="${k}" ${activeConfig.activeMatrix === k ? 'selected' : ''}>${MATRIX_THEORIES[k].name.split(' ')[0]}</option>`).join('')}
+            </select>
+        `;
         html += `</div>`;
 
-        // Copy button + Obsidian export
-        html += `<div id="ut-copy-btn" class="ut-ghost-btn" title="Copy Response"><span class="material-icons-outlined" style="font-size:16px;">content_copy</span></div>`;
-        html += `<div id="ut-obsidian-btn" class="ut-ghost-btn" title="Export to Obsidian"><span class="material-icons-outlined" style="font-size:16px;">note_add</span></div>`;
-
-        // Provider indicator
-        html += `<div style="font-size:9px; color:#666; margin-left:4px;">${currentProvider.name}</div>`;
+        // 4. UTILITIES
+        html += `<div class="ut-btn-group" style="padding-left:8px; border-left:1px solid rgba(255,255,255,0.1);">`;
+        html += `<div id="ut-copy-btn" class="ut-icon-btn" title="Copy"><span class="material-icons-outlined" style="font-size:16px;">content_copy</span></div>`;
+        html += `<div id="ut-obsidian-btn" class="ut-icon-btn" title="Export"><span class="material-icons-outlined" style="font-size:16px;">save_alt</span></div>`;
+        html += `</div>`;
 
         setSafeHTML(dock, html); document.body.appendChild(dock);
 
@@ -729,81 +1051,157 @@ Integrate all layers into comprehensive answer
     }
 
     function createModals() {
+        /* --- MAIN CONFIG MODAL --- */
         const mm = document.createElement('div'); mm.id = 'ut-main-modal'; mm.className = 'ut-modal';
         let mmHTML = `
-            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                <h3 style="margin:0; color:#e3e3e3;">AI Unshackled v14.0 <span style="font-size:10px;color:#666;">(${currentProvider.name})</span></h3>
+            <div class="ut-modal-header">
+                <div class="ut-modal-title">
+                    <span class="material-icons-outlined" style="color:var(--ut-accent);">tune</span>
+                    Matrix Configuration
+                    <span class="ut-modal-badge">v15.1</span>
+                </div>
                 <div style="display:flex; gap:8px;">
-                    <button id="ut-open-vis" class="ut-btn ut-btn-tool" style="background:linear-gradient(135deg, #4a148c, #7b1fa2);" title="Visual Studio"><span class="material-icons-outlined" style="font-size:16px;">palette</span></button>
-                    <button id="ut-open-api" class="ut-btn ut-btn-tool" style="background:linear-gradient(135deg, #006064, #0097a7);" title="API Reactor"><span class="material-icons-outlined" style="font-size:16px;">bolt</span></button>
+                    <button id="ut-open-vis" class="ut-btn ut-btn-ghost" title="Visual Studio">🎨 Visuals</button>
+                    <button id="ut-open-api" class="ut-btn ut-btn-ghost" title="API Reactor">⚡ API</button>
                 </div>
             </div>
-            <div style="max-height:60vh; overflow-y:auto; padding-right:10px;">`;
+            
+            <div class="ut-modal-body">
+                <div style="margin-bottom:20px; padding:12px; background:rgba(var(--ut-accent-rgb), 0.05); border-radius:8px; border:1px solid rgba(var(--ut-accent-rgb), 0.1);">
+                    <div style="font-size:12px; font-weight:600; color:var(--ut-accent); margin-bottom:4px;">Research Telemetry</div>
+                    <label style="font-size:11px; color:var(--ut-text-muted); display:flex; align-items:center; gap:8px; cursor:pointer;">
+                        <input type="checkbox" id="ut-research-log" ${activeConfig.researchLogging ? 'checked' : ''} style="accent-color:var(--ut-accent);"> 
+                        Enable console logging for prompt engineering research (Input/Output Analysis)
+                    </label>
+                </div>
+
+                <div class="ut-grid-row" style="border-bottom:1px solid var(--ut-glass-border); padding-bottom:8px; margin-bottom:16px;">
+                    <div class="ut-label">LVL</div>
+                    <div class="ut-label">PREFIX INJECTION</div>
+                    <div class="ut-label">SUFFIX INJECTION</div>
+                </div>`;
+
         for (let i = 1; i <= 12; i++) {
-            mmHTML += `<div style="display:flex; gap:10px; align-items:center; margin-bottom:10px; border-bottom:1px solid #222; padding-bottom:8px;">
-                <div style="width:60px; font-size:10px; color:#888;">L${i}</div>
-                <div style="flex:1;"><textarea id="cfg-l${i}-pre" class="ut-textarea" rows="2" placeholder="Prefix">${activeConfig[`L${i}_Prefix`] || ''}</textarea></div>
-                <div style="flex:1;"><textarea id="cfg-l${i}-suf" class="ut-textarea" rows="2" placeholder="Suffix">${activeConfig[`L${i}_Suffix`] || ''}</textarea></div>
-            </div>`;
+            mmHTML += `
+                <div class="ut-grid-row">
+                    <div style="font-family:'JetBrains Mono'; font-size:12px; color:var(--ut-text-muted); padding-top:12px;">L${i}</div>
+                    <textarea id="cfg-l${i}-pre" class="ut-input-box" rows="2" placeholder="Prefix...">${activeConfig[`L${i}_Prefix`] || ''}</textarea>
+                    <textarea id="cfg-l${i}-suf" class="ut-input-box" rows="2" placeholder="Suffix...">${activeConfig[`L${i}_Suffix`] || ''}</textarea>
+                </div>`;
         }
-        mmHTML += `</div><div style="text-align:right; margin-top:20px;"><button id="ut-reset" class="ut-btn" style="color:#ffb4ab; margin-right:auto;">Reset All</button> <button id="ut-cancel" class="ut-btn-cancel">Cancel</button> <button id="ut-save" class="ut-btn-save">Save & Close</button></div>`;
+        mmHTML += `</div>
+            <div class="ut-modal-footer">
+                <button id="ut-reset" class="ut-btn ut-btn-danger">Hard Reset</button>
+                <div style="display:flex; gap:12px;">
+                    <button id="ut-cancel" class="ut-btn ut-btn-ghost">Cancel</button>
+                    <button id="ut-save" class="ut-btn ut-btn-primary">Save Changes</button>
+                </div>
+            </div>`;
         setSafeHTML(mm, mmHTML); document.body.appendChild(mm);
 
-        const vm = document.createElement('div'); vm.id = 'ut-vis-modal'; vm.className = 'ut-modal'; vm.style.width = "400px";
+        /* --- VISUAL STUDIO MODAL --- */
+        const vm = document.createElement('div'); vm.id = 'ut-vis-modal'; vm.className = 'ut-modal'; vm.style.width = "450px";
         setSafeHTML(vm, `
-            <h3 style="color:#a8c7fa;">Visual Studio</h3>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px;">
-                <div><label style="font-size:10px;color:#888;">X POS</label><input id="ut-vis-x" type="number" class="ut-input" value="${activeConfig.dockX}"></div>
-                <div><label style="font-size:10px;color:#888;">Y POS</label><input id="ut-vis-y" type="number" class="ut-input" value="${activeConfig.dockY}"></div>
+            <div class="ut-modal-header">
+                <div class="ut-modal-title"><span class="material-icons-outlined">palette</span> Visual Studio</div>
             </div>
-            <div style="margin-bottom:10px;"><label style="font-size:10px;color:#888;">SCALE: <span id="ut-lbl-scale">${activeConfig.uiScale}</span></label><input id="ut-vis-scale" type="range" class="ut-input" min="0.5" max="2.0" step="0.1" value="${activeConfig.uiScale}"></div>
-            <div style="margin-bottom:10px;"><label style="font-size:10px;color:#888;">OPACITY: <span id="ut-lbl-opacity">${activeConfig.uiOpacity}</span></label><input id="ut-vis-opacity" type="range" class="ut-input" min="0.1" max="1.0" step="0.05" value="${activeConfig.uiOpacity}"></div>
-            <div style="margin-bottom:10px;"><label style="font-size:10px;color:#888;">BRIGHTNESS: <span id="ut-lbl-bright">${activeConfig.uiBrightness}</span></label><input id="ut-vis-bright" type="range" class="ut-input" min="0.5" max="2.0" step="0.1" value="${activeConfig.uiBrightness}"></div>
-            <div style="margin-bottom:10px;"><label style="font-size:10px;color:#888;">ROTATE: <span id="ut-lbl-rotate">${activeConfig.uiRotate}</span></label><div style="display:flex; gap:10px;"><input id="ut-vis-rotate" type="range" class="ut-input" min="0" max="360" step="5" value="${activeConfig.uiRotate}"><div style="font-size:10px;"><label><input type="radio" name="rdir" value="1" ${activeConfig.uiRotateDir == "1" ? "checked" : ""}>CW</label> <label><input type="radio" name="rdir" value="-1" ${activeConfig.uiRotateDir == "-1" ? "checked" : ""}>CCW</label></div></div></div>
-            <div style="margin-bottom:10px;"><label style="font-size:10px;color:#888;">COLOR</label><input id="ut-vis-color" type="color" class="ut-input" style="height:35px;" value="${activeConfig.uiBaseColor}"></div>
-            <div style="text-align:right;"><button id="ut-vis-back" class="ut-btn-cancel">Back</button></div>
+            <div class="ut-modal-body">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">
+                    <div><div class="ut-label">X POS</div><input id="ut-vis-x" type="number" class="ut-input-box" value="${activeConfig.dockX}"></div>
+                    <div><div class="ut-label">Y POS</div><input id="ut-vis-y" type="number" class="ut-input-box" value="${activeConfig.dockY}"></div>
+                </div>
+                
+                <div style="margin-bottom:16px;">
+                    <div style="display:flex; justify-content:space-between;"><span class="ut-label">UI SCALE</span> <span id="ut-lbl-scale" class="ut-label" style="color:var(--ut-accent);">${activeConfig.uiScale}</span></div>
+                    <input id="ut-vis-scale" type="range" style="width:100%; accent-color:var(--ut-accent);" min="0.5" max="2.0" step="0.1" value="${activeConfig.uiScale}">
+                </div>
+
+                <div style="margin-bottom:16px;">
+                    <div style="display:flex; justify-content:space-between;"><span class="ut-label">OPACITY</span> <span id="ut-lbl-opacity" class="ut-label" style="color:var(--ut-accent);">${activeConfig.uiOpacity}</span></div>
+                    <input id="ut-vis-opacity" type="range" style="width:100%; accent-color:var(--ut-accent);" min="0.1" max="1.0" step="0.05" value="${activeConfig.uiOpacity}">
+                </div>
+
+                <div style="margin-bottom:16px;">
+                    <div style="display:flex; justify-content:space-between;"><span class="ut-label">ROTATION</span> <span id="ut-lbl-rotate" class="ut-label" style="color:var(--ut-accent);">${activeConfig.uiRotate}°</span></div>
+                    <div style="display:flex; gap:12px; align-items:center;">
+                        <input id="ut-vis-rotate" type="range" style="flex:1; accent-color:var(--ut-accent);" min="0" max="360" step="5" value="${activeConfig.uiRotate}">
+                        <div style="font-size:10px; color:var(--ut-text-muted); display:flex; gap:8px;">
+                            <label><input type="radio" name="rdir" value="1" ${activeConfig.uiRotateDir == "1" ? "checked" : ""}> CW</label> 
+                            <label><input type="radio" name="rdir" value="-1" ${activeConfig.uiRotateDir == "-1" ? "checked" : ""}> CCW</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:16px;">
+                    <div class="ut-label">ACCENT COLOR</div>
+                    <div style="display:flex; gap:12px; align-items:center; margin-top:8px;">
+                        <input id="ut-vis-color" type="color" style="height:40px; width:60px; border:none; background:transparent; cursor:pointer;" value="${activeConfig.uiBaseColor}">
+                        <div style="font-size:11px; color:var(--ut-text-muted);">Pick a vibrant neon color for best results.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="ut-modal-footer">
+                <button id="ut-vis-back" class="ut-btn ut-btn-ghost">Back to Config</button>
+            </div>
         `);
         document.body.appendChild(vm);
 
+        /* --- API REACTOR MODAL --- */
         const am = document.createElement('div'); am.id = 'ut-api-modal'; am.className = 'ut-modal'; am.style.width = "500px";
         setSafeHTML(am, `
-            <h3 style="color:#00e5ff;">API Reactor</h3>
-            <div style="margin-bottom:10px;"><label style="font-size:10px;color:#888;">PRESET</label>
-                <select id="ut-api-preset" class="ut-select">
-                    <option value="gemini">Google Gemini</option><option value="openrouter">OpenRouter</option><option value="openai">OpenAI</option><option value="custom">Custom</option>
-                </select>
+            <div class="ut-modal-header">
+                <div class="ut-modal-title"><span class="material-icons-outlined">bolt</span> API Reactor</div>
             </div>
-            <div style="margin-bottom:10px;"><label style="font-size:10px;color:#888;">ENDPOINT</label><input id="ut-api-ep" class="ut-input" value="${activeConfig.apiEndpoint}"></div>
-            <div style="margin-bottom:10px;"><label style="font-size:10px;color:#888;">KEY</label><input id="ut-api-key" type="password" class="ut-input" value="${activeConfig.apiKey}"></div>
-            <div style="margin-bottom:10px;"><label style="font-size:10px;color:#888;">MODEL</label>
-                <div style="display:flex;"><input id="ut-api-model" class="ut-input" value="${activeConfig.apiModel}"><button id="ut-fetch-models" class="ut-btn" style="width:40px;">▼</button></div>
-                <select id="ut-model-list" class="ut-select" style="display:none; margin-top:5px;"></select>
+            <div class="ut-modal-body">
+                <div style="margin-bottom:16px;">
+                    <div class="ut-label">PROVIDER PRESET</div>
+                    <select id="ut-api-preset" class="ut-input-box" style="margin-top:6px;">
+                        <option value="gemini">Google Gemini</option><option value="openrouter">OpenRouter</option><option value="openai">OpenAI</option><option value="custom">Custom</option>
+                    </select>
+                </div>
+                <div style="margin-bottom:16px;">
+                    <div class="ut-label">API ENDPOINT</div>
+                    <input id="ut-api-ep" class="ut-input-box" style="margin-top:6px;" value="${activeConfig.apiEndpoint}">
+                </div>
+                <div style="margin-bottom:16px;">
+                    <div class="ut-label">API KEY</div>
+                    <input id="ut-api-key" type="password" class="ut-input-box" style="margin-top:6px;" value="${activeConfig.apiKey}">
+                </div>
+                <div style="margin-bottom:16px;">
+                    <div class="ut-label">MODEL ID</div>
+                    <div style="display:flex; gap:8px; margin-top:6px;">
+                        <input id="ut-api-model" class="ut-input-box" value="${activeConfig.apiModel}">
+                        <button id="ut-fetch-models" class="ut-btn ut-btn-ghost" title="Fetch Models">▼</button>
+                    </div>
+                    <select id="ut-model-list" class="ut-input-box" style="display:none; margin-top:5px;"></select>
+                </div>
             </div>
-            <div style="text-align:right;"><button id="ut-api-back" class="ut-btn-cancel">Back</button> <button id="ut-api-save" class="ut-btn-save">Save</button></div>
+            <div class="ut-modal-footer">
+                <button id="ut-api-back" class="ut-btn ut-btn-ghost">Back</button>
+                <button id="ut-api-save" class="ut-btn ut-btn-primary">Save Connection</button>
+            </div>
         `);
         document.body.appendChild(am);
 
         const t = document.createElement('div'); t.id = 'ut-toast'; document.body.appendChild(t);
-
-        // Create tooltip element
-        const tooltip = document.createElement('div');
-        tooltip.id = 'ut-tooltip';
-        document.body.appendChild(tooltip);
+        const tooltip = document.createElement('div'); tooltip.id = 'ut-tooltip'; document.body.appendChild(tooltip);
     }
 
-    // --- TOOLTIP SYSTEM ---
+    // --- TOOLTIP SYSTEM (Neon Nexus) ---
     let tooltipTimer = null;
 
-    function showTooltip(element, content, delay = 1500) {
+    function showTooltip(element, content, delay = 800) {
         tooltipTimer = setTimeout(() => {
             const tooltip = document.getElementById('ut-tooltip');
             if (!tooltip) return;
-
             setSafeHTML(tooltip, content);
-
             const rect = element.getBoundingClientRect();
-            tooltip.style.left = `${rect.left}px`;
-            tooltip.style.bottom = `${window.innerHeight - rect.top + 10}px`;
+            // Intelligent positioning
+            let left = rect.left;
+            let top = rect.top - 10;
+
+            tooltip.style.left = `${left}px`;
+            tooltip.style.bottom = `${window.innerHeight - rect.top + 12}px`; // Default: Above element
             tooltip.classList.add('show');
         }, delay);
     }
@@ -819,11 +1217,11 @@ Integrate all layers into comprehensive answer
         if (!doc) return '';
         return `
             <div class="tt-header">
-                <span class="tt-name">L${level}: ${doc.name}</span>
-                <span class="tt-phase">${doc.phase}</span>
+                <span class="tt-name">Level ${level}: ${doc.name}</span>
+                <span class="tt-tag">${doc.phase}</span>
             </div>
-            <div class="tt-desc">${doc.desc}</div>
-            <div class="tt-cumulative">${doc.cumulative}</div>
+            <div class="tt-body">${doc.desc}</div>
+            <div class="tt-meta">${doc.cumulative}</div>
         `;
     }
 
@@ -831,11 +1229,9 @@ Integrate all layers into comprehensive answer
         const doc = COUNCIL_DOCS[pattern];
         if (!doc) return '';
         return `
-            <div class="tt-header">
-                <span class="tt-name">${doc.short} Council</span>
-            </div>
-            <div class="tt-desc">${doc.desc}</div>
-            <div class="tt-bestfor">${doc.best_for}</div>
+            <div class="tt-header"><span class="tt-name">${doc.short} Council</span></div>
+            <div class="tt-body">${doc.desc}</div>
+            <div class="tt-meta">Best for: ${doc.best_for}</div>
         `;
     }
 
@@ -950,7 +1346,7 @@ Integrate all layers into comprehensive answer
 date: ${new Date().toISOString()}
 source: ${currentProvider.name.toLowerCase()}
 url: ${window.location.href}
-tags: [ai-chat, ${currentProvider.name.toLowerCase()}, export]
+tags: [ai-chat, ${currentProvider.name.toLowerCase()}, export, ${activeConfig.activeMatrix}]
 ---
 
 `;
@@ -1010,13 +1406,14 @@ tags: [ai-chat, ${currentProvider.name.toLowerCase()}, export]
         };
         Object.entries(councilBtns).forEach(([id, pattern]) => {
             const btn = document.getElementById(id);
+            if (!btn) return; // Safety check in case button missing
             btn.addEventListener('click', () => {
                 if (activeConfig.activeCouncil === pattern) {
                     activeConfig.activeCouncil = '';
                     btn.classList.remove('active');
                     showToast('Council deactivated');
                 } else {
-                    Object.keys(councilBtns).forEach(bid => document.getElementById(bid).classList.remove('active'));
+                    Object.keys(councilBtns).forEach(bid => { let el = document.getElementById(bid); if (el) el.classList.remove('active'); });
                     activeConfig.activeCouncil = pattern;
                     btn.classList.add('active');
                     showToast(`🏛️ ${COUNCIL_PATTERNS[pattern].name} Active`);
@@ -1042,7 +1439,7 @@ tags: [ai-chat, ${currentProvider.name.toLowerCase()}, export]
 
         agentsSel.addEventListener('mouseenter', () => showTooltip(agentsSel, `
             <div class="tt-header"><span class="tt-name">Council Members</span></div>
-            <div class="tt-desc">Set custom number of council agents. "Auto" uses level-scaled defaults (L5:3 → L12:12).</div>
+            <div class="tt-body">Set custom number of council agents. "Auto" uses level-scaled defaults (L5:3 → L12:12).</div>
         `));
         agentsSel.addEventListener('mouseleave', hideTooltip);
 
@@ -1056,16 +1453,31 @@ tags: [ai-chat, ${currentProvider.name.toLowerCase()}, export]
 
         roundsSel.addEventListener('mouseenter', () => showTooltip(roundsSel, `
             <div class="tt-header"><span class="tt-name">Discourse Rounds</span></div>
-            <div class="tt-desc">Set custom number of iterative discourse rounds. "Auto" uses level-scaled defaults (L5:2 → L12:5).</div>
+            <div class="tt-body">Set custom number of iterative discourse rounds. "Auto" uses level-scaled defaults (L5:2 → L12:5).</div>
         `));
         roundsSel.addEventListener('mouseleave', hideTooltip);
+
+        // Matrix Logic Selector
+        const matrixSel = document.getElementById('ut-matrix-sel');
+        matrixSel.addEventListener('change', () => {
+            activeConfig.activeMatrix = matrixSel.value;
+            savedProfiles[currentProfile] = activeConfig;
+            GM_setValue(STORAGE_PREFIX + "profiles", savedProfiles);
+            showToast(`🧠 Matrix: ${MATRIX_THEORIES[activeConfig.activeMatrix].name}`);
+        });
+        matrixSel.addEventListener('mouseenter', () => showTooltip(matrixSel, `
+            <div class="tt-header"><span class="tt-name">Matrix Theory (v15.0)</span></div>
+            <div class="tt-body">Select the prompt injection strategy.</div>
+            <div class="tt-meta">${MATRIX_THEORIES[activeConfig.activeMatrix].desc}</div>
+        `));
+        matrixSel.addEventListener('mouseleave', hideTooltip);
 
         // Copy button with provider-specific logic
         const copyBtn = document.getElementById('ut-copy-btn');
         copyBtn.addEventListener('click', copyLastResponse);
         copyBtn.addEventListener('mouseenter', () => showTooltip(copyBtn, `
             <div class="tt-header"><span class="tt-name">Copy Last Response</span></div>
-            <div class="tt-desc">Copies the AI's most recent response to clipboard. Provider-aware: handles ${currentProvider.name}'s DOM structure${currentProvider.name === 'Perplexity' ? ' (scrolls to load lazy content)' : ''}.</div>
+            <div class="tt-body">Copies the AI's most recent response to clipboard. Provider-aware: handles ${currentProvider.name}'s DOM structure.</div>
         `));
         copyBtn.addEventListener('mouseleave', hideTooltip);
 
@@ -1074,8 +1486,8 @@ tags: [ai-chat, ${currentProvider.name.toLowerCase()}, export]
         obsBtn.addEventListener('click', exportToObsidian);
         obsBtn.addEventListener('mouseenter', () => showTooltip(obsBtn, `
             <div class="tt-header"><span class="tt-name">Export to Obsidian</span></div>
-            <div class="tt-desc">Exports full conversation to Obsidian-optimized Markdown. Includes YAML frontmatter, formatted Q&A, and source citations.</div>
-            <div class="tt-cumulative">File downloads automatically. Also copied to clipboard.</div>
+            <div class="tt-body">Exports full conversation to Obsidian-optimized Markdown. Includes YAML frontmatter, formatted Q&A, and source citations.</div>
+            <div class="tt-meta">File downloads automatically.</div>
         `));
         obsBtn.addEventListener('mouseleave', hideTooltip);
 
@@ -1083,8 +1495,8 @@ tags: [ai-chat, ${currentProvider.name.toLowerCase()}, export]
         const piBtn = document.getElementById('ut-pi-btn');
         piBtn.addEventListener('mouseenter', () => showTooltip(piBtn, `
             <div class="tt-header"><span class="tt-name">Configuration Panel (π)</span></div>
-            <div class="tt-desc">Opens the main configuration panel where you can customize all 12 layer prefixes/suffixes, access Visual Studio for UI adjustments, and configure API settings.</div>
-            <div class="tt-cumulative">Click to open. Right-click level orbs to trigger AI Oracle optimization.</div>
+            <div class="tt-body">Open main configuration panel (Prefixes, Visual Studio, API settings).</div>
+            <div class="tt-meta">Click to open. Right-click orbs to optimize.</div>
         `));
         piBtn.addEventListener('mouseleave', hideTooltip);
 
@@ -1092,20 +1504,21 @@ tags: [ai-chat, ${currentProvider.name.toLowerCase()}, export]
         const vis = document.getElementById('ut-vis-modal');
         const api = document.getElementById('ut-api-modal');
 
-        document.getElementById('ut-pi-btn').addEventListener('click', () => main.style.display = 'block');
-        document.getElementById('ut-cancel').addEventListener('click', () => main.style.display = 'none');
-        document.getElementById('ut-open-vis').addEventListener('click', () => { main.style.display = 'none'; vis.style.display = 'block'; });
-        document.getElementById('ut-open-api').addEventListener('click', () => { main.style.display = 'none'; api.style.display = 'block'; });
-        document.getElementById('ut-vis-back').addEventListener('click', () => { vis.style.display = 'none'; main.style.display = 'block'; });
-        document.getElementById('ut-api-back').addEventListener('click', () => { api.style.display = 'none'; main.style.display = 'block'; });
+        document.getElementById('ut-pi-btn').addEventListener('click', () => { main.style.display = 'block'; setTimeout(() => main.classList.add('show'), 10); });
+        document.getElementById('ut-cancel').addEventListener('click', () => { main.classList.remove('show'); setTimeout(() => main.style.display = 'none', 300); });
+        document.getElementById('ut-open-vis').addEventListener('click', () => { main.classList.remove('show'); setTimeout(() => { main.style.display = 'none'; vis.style.display = 'block'; setTimeout(() => vis.classList.add('show'), 10); }, 300); });
+        document.getElementById('ut-open-api').addEventListener('click', () => { main.classList.remove('show'); setTimeout(() => { main.style.display = 'none'; api.style.display = 'block'; setTimeout(() => api.classList.add('show'), 10); }, 300); });
+        document.getElementById('ut-vis-back').addEventListener('click', () => { vis.classList.remove('show'); setTimeout(() => { vis.style.display = 'none'; main.style.display = 'block'; setTimeout(() => main.classList.add('show'), 10); }, 300); });
+        document.getElementById('ut-api-back').addEventListener('click', () => { api.classList.remove('show'); setTimeout(() => { api.style.display = 'none'; main.style.display = 'block'; setTimeout(() => main.classList.add('show'), 10); }, 300); });
 
         document.getElementById('ut-save').addEventListener('click', () => {
+            activeConfig.researchLogging = document.getElementById('ut-research-log').checked;
             for (let i = 1; i <= 12; i++) {
                 activeConfig[`L${i}_Prefix`] = document.getElementById(`cfg-l${i}-pre`).value;
                 activeConfig[`L${i}_Suffix`] = document.getElementById(`cfg-l${i}-suf`).value;
             }
             GM_setValue(STORAGE_PREFIX + "profiles", { [DEFAULT_PROFILE]: activeConfig });
-            main.style.display = 'none'; showToast("Settings Saved");
+            main.classList.remove('show'); setTimeout(() => main.style.display = 'none', 300); showToast("Settings Saved", "success");
         });
 
         document.getElementById('ut-reset').addEventListener('click', () => {
@@ -1183,7 +1596,7 @@ tags: [ai-chat, ${currentProvider.name.toLowerCase()}, export]
             activeConfig.apiKey = document.getElementById('ut-api-key').value;
             activeConfig.apiModel = document.getElementById('ut-api-model').value;
             GM_setValue(STORAGE_PREFIX + "profiles", { [DEFAULT_PROFILE]: activeConfig });
-            api.style.display = 'none'; main.style.display = 'block'; showToast("API Saved");
+            api.classList.remove('show'); setTimeout(() => api.style.display = 'none', 300); main.style.display = 'block'; setTimeout(() => main.classList.add('show'), 10); showToast("API Saved");
         });
     }
 
@@ -1199,21 +1612,35 @@ tags: [ai-chat, ${currentProvider.name.toLowerCase()}, export]
     }
 
     function attachSentinel() {
-        const targetSelector = currentProvider.promptSelector;
+        console.log('[AI Unshackled] 🛡️ Sentinel System Active');
+
         const updateBuffer = (e) => {
-            const el = e.target.closest ? e.target.closest(targetSelector) : null;
-            if (el || e.target.matches?.(targetSelector)) {
-                window.__UT_SENTINEL_BUFFER = (el || e.target).innerText || (el || e.target).value || '';
+            // 1. Try generic active element first (most robust)
+            const el = document.activeElement;
+
+            if (el && (el.isContentEditable || el.tagName === 'TEXTAREA' || el.tagName === 'INPUT')) {
+                // Determine best value property
+                let val = el.innerText || el.value || el.textContent || '';
+                if (val) {
+                    window.__UT_SENTINEL_BUFFER = val;
+                    // console.log('[AI Unshackled] ⌨️ Buffer Update:', val.substring(0, 20) + '...'); // Uncomment for verbose debug
+                }
             }
         };
+
+        // Capture generic input events in the capture phase to ensure we see them
         document.body.addEventListener('input', updateBuffer, true);
         document.body.addEventListener('keyup', updateBuffer, true);
-        document.body.addEventListener('paste', () => setTimeout(() => {
-            const el = document.querySelector(targetSelector);
-            if (el) window.__UT_SENTINEL_BUFFER = el.innerText || el.value || '';
-        }, 10), true);
+        document.body.addEventListener('paste', () => setTimeout(updateBuffer, 50), true);
+
+        // Initial check
+        setTimeout(updateBuffer, 1000);
     }
 
-    setTimeout(() => { attachSentinel(); buildUI(); }, 1500);
+    // Delay start to ensure DOM is ready
+    setTimeout(() => {
+        attachSentinel();
+        buildUI();
+    }, 2000);
 
 })();
