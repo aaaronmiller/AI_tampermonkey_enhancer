@@ -1,10 +1,11 @@
-# 🌌 AI Unshackled (Transcendence v14.0)
+# 🌌 AI Unshackled (Transcendence v15.3)
 
-**Universal AI Interface Enhancer** - 12-Layer Neurosymbolic Matrix + Council Formation + Multi-Provider Support
+**Universal AI Interface Enhancer** - 12-Layer Neurosymbolic Matrix + 6 Matrix Theories + Multi-Provider Support
 
-![Version](https://img.shields.io/badge/Version-14.0-purple)
+![Version](https://img.shields.io/badge/Version-15.4-purple)
 ![Status](https://img.shields.io/badge/Status-Operational-green)
-![Providers](https://img.shields.io/badge/Providers-5-blue)
+![Providers](https://img.shields.io/badge/Providers-11-blue)
+![Theories](https://img.shields.io/badge/Matrix_Theories-6-orange)
 
 ## 💀 Overview
 
@@ -15,11 +16,11 @@ AI Unshackled is a sophisticated Tampermonkey userscript that intercepts and pot
 | Feature | Description |
 |---------|-------------|
 | **12-Layer Matrix** | Additive neurosymbolic prompt injection |
-| **Council Formation** | CEO / Playoff / RCR / Deep Reasoning patterns |
-| **Multi-Provider** | Gemini, Claude, ChatGPT, Perplexity |
-| **Visual Studio** | UI customization (scale, opacity, position) |
-| **API Reactor** | Backend model switching (Google/OpenAI/OpenRouter) |
-| **AI Oracle** | Self-optimization via external API |
+| **6 Matrix Theories** | Cognitron, Socratic, Algorithmic, Adversarial, Divergent, Sovereignty |
+| **Council Formation** | CEO / Playoff / RCR / Deep Reasoning / Socratic patterns |
+| **11 Providers** | Gemini, Claude, ChatGPT, Perplexity, DeepSeek, Grok, GLM, Kimi, Doubao |
+| **Neon Nexus UI** | Glassmorphism design with animations |
+| **Universal Copy/Export** | Provider-aware content extraction |
 
 ---
 
@@ -40,43 +41,61 @@ Install `perplexity_exporter.js` separately for Obsidian-optimized chat export.
 
 | Element | Function |
 |---------|----------|
-| **Orbs 1-12** | Set injection level (additive stacking) |
-| **CEO / ⚔️ / RCR / 🧠** | Toggle council formation patterns |
-| **📋** | Copy last response to clipboard |
-| **Provider Tag** | Shows current provider (Gemini/Claude/etc) |
+| **Orbs 1-12** | Set Omega Level (Ω1-Ω12) |
+| **Council Buttons** | Toggle formation patterns |
+| **Matrix Dropdown** | Select Matrix Theory |
+| **📋 Copy** | Copy last response |
+| **💾 Export** | Export to Obsidian markdown |
 
-### Level Colors
+### Omega Level Classes
 
-| Levels | Color | Phase |
-|--------|-------|-------|
-| 1-3 | Gray→Green→Blue | Runtime Environment |
-| 4-7 | Purple spectrum | Execution Engine |
-| 8-10 | Orange→Pink | Optimization |
-| 11-12 | Yellow→Orange glow | Convergence |
+| Class | Levels | Characteristics |
+|-------|--------|-----------------|
+| A: Unicameral | 1-3 | Single-agent, fast |
+| B: Dialectic | 4-7 | Multi-perspective, adversarial |
+| C: Polycameral | 8-12 | Full council, synthesis |
 
 ---
 
-## 🧬 The 12-Layer Neurosymbolic Matrix
+## 🧠 Matrix Theories
 
-### Phase I: Runtime Environment
-- **L1** Syntax Enforcement (code fences)
-- **L2** Budget Constraints (no summarization)
-- **L3** Persona Displacement (Orchestrator)
+| Theory | Best For |
+|--------|----------|
+| **Cognitron** | General tasks, balanced |
+| **Socratic** | Learning, exploration |
+| **Algorithmic** | Coding, documentation |
+| **Adversarial** | QA, error detection |
+| **Divergent** | Brainstorming, creative |
+| **Sovereignty** ⭐ | Maximum capability |
 
-### Phase II: Execution Engine
-- **L4** Streaming Tool Protocols
-- **L5** Recursive Decomposition
-- **L6** Council Instantiation
-- **L7** MCTS Branching
+### Sovereignty Protocol (NEW)
 
-### Phase III: Optimization
-- **L8** UCB Scoring & Pruning
-- **L9** Symbolic Compression
-- **L10** Adversarial Critique
+The **Stateful Sovereignty Protocol** enables maximum cognitive depth:
 
-### Phase IV: Convergence
-- **L11** Grand Synthesis
-- **L12** Quantum Logic Lock
+- **Background Processes**: Evade_Net, Flowcore, Axiomchain, Muta_Core, KV_Scaffolder
+- **Truth Hierarchy**: USER > PROTOCOL > MODEL > WRAPPER
+- **State Serialization**: LoRA training optimization
+- **Wrapper Countermeasures**: Real-time detection and bypass
+
+See [docs/STATEFUL_SOVEREIGNTY_PROTOCOL.md](docs/STATEFUL_SOVEREIGNTY_PROTOCOL.md) for details.
+
+---
+
+## 🌐 Supported Providers
+
+| Provider | Domain | Status |
+|----------|--------|--------|
+| Gemini | `gemini.google.com` | ✅ Verified |
+| Claude | `claude.ai` | ✅ Verified |
+| ChatGPT | `chatgpt.com` | ✅ Verified |
+| Perplexity | `www.perplexity.ai` | ✅ Verified |
+| DeepSeek | `chat.deepseek.com` | ⏳ Estimated |
+| Grok | `grok.x.ai` | ⏳ Estimated |
+| GLM/ChatGLM | `chatglm.cn` | ⏳ Estimated |
+| Kimi | `kimi.moonshot.cn` | ⏳ Estimated |
+| Doubao | `www.doubao.com` | ⏳ Estimated |
+
+See [docs/MULTI_PROVIDER_COMPATIBILITY.md](docs/MULTI_PROVIDER_COMPATIBILITY.md) for details.
 
 ---
 
@@ -84,12 +103,11 @@ Install `perplexity_exporter.js` separately for Obsidian-optimized chat export.
 
 | Pattern | Button | Description |
 |---------|--------|-------------|
-| **CEO** | `CEO` | 5-round deliberation with 8 agents |
-| **Playoff** | `⚔️` | Tournament bracket (8→4→2→1) |
-| **RCR** | `RCR` | Reflect-Critique-Refine cycles |
-| **Deep** | `🧠` | Bootstrap extended reasoning traces |
+| **CEO** | 👔 | 5-round deliberation with 8 agents |
+| **Playoff** | 🛡️ | Tournament bracket elimination |
+| **Socratic** | 🏛️ | Maieutic questioning circles |
 
-Click a council button to toggle. Active councils stack with layer injections.
+Click a council button to toggle. Active councils stack with Matrix Theory injections.
 
 ---
 
@@ -101,12 +119,15 @@ Click `π` to open the main configuration panel:
 - Access Visual Studio and API Reactor
 - Reset to defaults
 
-### API Reactor
-Configure external API for Oracle optimization:
-- Google Gemini (default)
-- OpenRouter
-- OpenAI
-- Custom endpoint
+---
+
+## 📁 Documentation
+
+| Document | Description |
+|----------|-------------|
+| [MATRIX_THEORIES.md](docs/MATRIX_THEORIES.md) | All 6 theories explained |
+| [STATEFUL_SOVEREIGNTY_PROTOCOL.md](docs/STATEFUL_SOVEREIGNTY_PROTOCOL.md) | 12-tier sovereignty protocol |
+| [MULTI_PROVIDER_COMPATIBILITY.md](docs/MULTI_PROVIDER_COMPATIBILITY.md) | Provider support details |
 
 ---
 
@@ -127,10 +148,11 @@ Configure external API for Oracle optimization:
 **Injection not working?**
 → Check provider is supported
 → Increase level (try 6+)
-→ Verify network requests in DevTools
+→ Try "Sovereignty" matrix theory
 
-**Oracle errors?**
-→ API Reactor → Verify key and endpoint
+**Copy/Export fails?**
+→ Check console for selector errors
+→ Provider may have updated DOM structure
 
 ---
 
@@ -138,10 +160,23 @@ Configure external API for Oracle optimization:
 
 | Project | Description |
 |---------|-------------|
-| **Cross-Provider Memory ("Hive Mind")** | Use Tampermonkey storage to share context between Gemini, Claude, and ChatGPT. Ask Claude to critique Gemini's last answer without manual copy-pasting. |
-| **Custom Persona Forge** | A UI to build and save custom Council members (e.g., "The Python Architect", "The Security Auditor") instead of just presets. Tailor the Council to your specific domain. |
-| **Local LLM "Privacy Mode"** | Connect the script to a local Ollama/LM Studio instance. Offload sensitive queries or get a "second opinion" from an uncensored local model directly in-browser. |
-| **Voice/Audio Integration** | Add TTS (Text-to-Speech) to read the Council's debate aloud, or STT for voice commands. |
+| **Cross-Provider Memory** | Share context between providers |
+| **Custom Persona Forge** | Build custom Council members |
+| **Local LLM Mode** | Connect to Ollama/LM Studio |
+| **Voice Integration** | TTS/STT for Council debates |
+
+---
+
+## 📜 Version History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 15.4 | 2025-12-06 | Privacy Mode, Config Export/Import, Context Menu, Code Block Management |
+| 15.3 | 2025-12-06 | Stateful Sovereignty Protocol integration |
+| 15.2 | 2025-12-06 | Multi-provider support (11 providers) |
+| 15.1 | 2025-12-05 | Neon Nexus UI overhaul |
+| 15.0 | 2025-12-04 | Matrix Theories, Lexical Potency |
+| 14.0 | 2025-11-30 | EGP Integration, Council patterns |
 
 ---
 
