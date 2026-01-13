@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         AI Unshackled (Transcendence v17.4)
+// @name         AI Unshackled (Transcendence v17.7)
 // @namespace    http://tampermonkey.net/
-// @version      17.4
-// @description  Universal AI Enhancer (Gemini, ChatGPT, Claude, Perplexity, DeepSeek, Grok, GLM, Kimi, Doubao) with "Neon Nexus" UI and 13-Layer Potency Matrix (L0-L12).
+// @version      17.7
+// @description  Universal AI Enhancer with per-level cumulative/independent mode control, hover previews, and 13-Layer Potency Matrix.
 // @author       HB & Google DeepMind
 // @match        *://gemini.google.com/*
 // @match        *://chatgpt.com/*
@@ -33,7 +33,7 @@
 // ==/UserScript==
 
 // --- VERSION & CONFIG ---
-const VERSION = "17.1";
+const VERSION = "17.7";
 (function () {
     'use strict';
 
@@ -69,28 +69,27 @@ const VERSION = "17.1";
     if (!policy) {
         policy = { createHTML: (s) => s };
     }
-    // Safe HTML injection helper – falls back to textContent for non‑HTML strings
-    // Safe HTML injection helper – falls back to DOMParser for non‑HTML strings or when TT is blocked
+
+    // Safe HTML injection helper – falls back to DOMParser when TT is blocked
+    const domParser = new DOMParser(); // Reuse single parser instance
     const setSafeHTML = (el, str) => {
         try {
-            // Try standard Trusted Types assignment first
             el.innerHTML = policy.createHTML(str);
         } catch (e) {
-            console.warn('[AI Unshackled] setSafeHTML fallback: Trusted Types blocked innerHTML. Using DOMParser.', e);
-            // Fallback: Parse string into nodes and append them safely
+            // Fallback: Parse string into nodes and append safely
             try {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(str, 'text/html');
-                el.innerHTML = ''; // Start clean
-                const nodes = Array.from(doc.body.childNodes);
-                nodes.forEach(node => el.appendChild(node));
+                const doc = domParser.parseFromString(str, 'text/html');
+                el.replaceChildren(...doc.body.childNodes);
             } catch (e2) {
-                console.error('[AI Unshackled] setSafeHTML DOMParser failed. Fallback to textContent.', e2);
                 el.textContent = str;
             }
         }
     };
 
+    // DOM element cache for frequently accessed elements
+    const $cache = {};
+    const $ = (id) => $cache[id] || ($cache[id] = document.getElementById(id));
+    const $clear = () => { for (const k in $cache) delete $cache[k]; };
 
     // === 0. ASSET INJECTION (Font) ===
     // (Removed to prevent CSP blocking - using Emojis instead)
@@ -143,57 +142,59 @@ const VERSION = "17.1";
         },
         'www.perplexity.ai': {
             name: 'Perplexity',
-            promptSelector: 'textarea[placeholder*="Ask"]',
-            fetchPattern: /query/,
-            responseSelector: '[class*="Answer"], [class*="prose"]',
-            userMsgSelector: '[class*="UserMessage"]',
-            aiMsgSelector: '[class*="Answer"], [class*="AssistantMessage"]'
+            // Enhanced input detection with multiple fallbacks
+            promptSelector: 'textarea[placeholder*="Ask"],textarea[placeholder*="Search"],div[contenteditable="true"],textarea[id*="input"],textarea[class*="input"],div[class*="input"],[data-testid*="input"],textarea',
+            // Expanded fetch patterns for Perplexity's API endpoints
+            fetchPattern: /query|api\/query|completions|chat/,
+            responseSelector: '[class*="Answer"], [class*="prose"], [class*="AssistantMessage"], [data-testid*="answer"]',
+            userMsgSelector: '[class*="UserMessage"], [class*="user-message"], [class*="prose-user"], [data-testid*="user"]',
+            aiMsgSelector: '[class*="Answer"], [class*="AssistantMessage"], [class*="ai-message"], [data-testid*="assistant"], [class*="prose-assistant"]'
         },
         // === NEW PROVIDERS (v15.2) ===
         'chat.deepseek.com': {
             name: 'DeepSeek',
-            promptSelector: 'textarea[placeholder*="Send"], textarea[placeholder*="Message"], #chat-input',
-            fetchPattern: /chat\/completions|v1\/chat/,
+            promptSelector: 'textarea[placeholder*="Send"],textarea[placeholder*="Message"],#chat-input,textarea[class*="input"],textarea:not([disabled]):not([readonly])',
+            fetchPattern: /chat\/completions|v1\/chat|deepseek/,
             responseSelector: '.markdown-body, .message-content, [class*="assistant"]',
             userMsgSelector: '[class*="user-message"], [data-role="user"]',
             aiMsgSelector: '[class*="assistant-message"], [data-role="assistant"], .markdown-body'
         },
         'grok.x.ai': {
             name: 'Grok',
-            promptSelector: 'textarea[data-testid="composer"], textarea[placeholder*="Message"]',
-            fetchPattern: /v1\/chat\/completions|grok/,
+            promptSelector: 'textarea[data-testid="composer"],textarea[placeholder*="Message"],textarea[class*="input"],textarea:not([disabled]):not([readonly])',
+            fetchPattern: /v1\/chat\/completions|grok|x\.ai/,
             responseSelector: '[data-testid="message-content"], .prose, [class*="response"]',
             userMsgSelector: '[data-testid="user-message"], [class*="user"]',
             aiMsgSelector: '[data-testid="assistant-message"], [class*="assistant"]'
         },
         'chatglm.cn': {
             name: 'ChatGLM',
-            promptSelector: 'textarea[placeholder], #chat-input, [contenteditable="true"]',
-            fetchPattern: /paas\/v4\/chat|chat\/completions/,
+            promptSelector: 'textarea[placeholder],#chat-input,[contenteditable="true"],textarea[class*="input"],textarea:not([disabled]):not([readonly])',
+            fetchPattern: /paas\/v4\/chat|chat\/completions|glm/,
             responseSelector: '.message-content, .markdown-content, [class*="assistant"]',
             userMsgSelector: '[class*="user"], [data-role="user"]',
             aiMsgSelector: '[class*="assistant"], .message-content'
         },
         'chat.zhipuai.cn': {
             name: 'ChatGLM',
-            promptSelector: 'textarea[placeholder], #chat-input, [contenteditable="true"]',
-            fetchPattern: /paas\/v4\/chat|chat\/completions/,
+            promptSelector: 'textarea[placeholder],#chat-input,[contenteditable="true"],textarea[class*="input"],textarea:not([disabled]):not([readonly])',
+            fetchPattern: /paas\/v4\/chat|chat\/completions|zhipu/,
             responseSelector: '.message-content, .markdown-content, [class*="assistant"]',
             userMsgSelector: '[class*="user"], [data-role="user"]',
             aiMsgSelector: '[class*="assistant"], .message-content'
         },
         'kimi.moonshot.cn': {
             name: 'Kimi',
-            promptSelector: 'textarea.chat-input, textarea[placeholder], #chat-input',
-            fetchPattern: /v1\/chat\/completions|moonshot/,
+            promptSelector: 'textarea.chat-input,textarea[placeholder],#chat-input,textarea[class*="input"],textarea:not([disabled]):not([readonly])',
+            fetchPattern: /v1\/chat\/completions|moonshot|kimi/,
             responseSelector: '.chat-message-content, .prose, [class*="assistant"]',
             userMsgSelector: '[class*="user"], .user-message',
             aiMsgSelector: '[class*="assistant"], .chat-message-content'
         },
         'www.doubao.com': {
             name: 'Doubao',
-            promptSelector: 'textarea[class*="input"], #chat-input, textarea[placeholder]',
-            fetchPattern: /api\/chat|v1\/chat/,
+            promptSelector: 'textarea[class*="input"],#chat-input,textarea[placeholder],textarea:not([disabled]):not([readonly])',
+            fetchPattern: /api\/chat|v1\/chat|doubao/,
             responseSelector: '.message-text, .response-content, [class*="assistant"]',
             userMsgSelector: '[class*="user"], .user-message',
             aiMsgSelector: '[class*="assistant"], .message-text'
@@ -1191,9 +1192,69 @@ Fin.`,
         }
     };
 
+    // --- PROVIDER PRESETS (v17.6 - Updated Models) ---
+    const PROVIDER_PRESETS = {
+        gemini: {
+            name: "Google Gemini",
+            endpoint: "https://generativelanguage.googleapis.com/v1beta/models/",
+            defaultModel: "gemini-3.0-pro",
+            models: [
+                { id: "gemini-3.0-pro", thinking: false },
+                { id: "gemini-3.0-flash", thinking: false },
+                { id: "gemini-2.5-pro-preview", thinking: false },
+                { id: "gemini-2.5-flash", thinking: false }
+            ]
+        },
+        openai: {
+            name: "OpenAI",
+            endpoint: "https://api.openai.com/v1",
+            defaultModel: "gpt-5.2-high",
+            models: [
+                { id: "gpt-5.2-high", thinking: false },
+                { id: "gpt-4.5-turbo", thinking: false },
+                { id: "gpt-4o", thinking: false },
+                { id: "o3-mini", thinking: true, thinkingBudget: 32768 }
+            ]
+        },
+        anthropic: {
+            name: "Anthropic Claude",
+            endpoint: "https://api.anthropic.com/v1",
+            defaultModel: "claude-sonnet-4.5",
+            models: [
+                { id: "claude-sonnet-4.5", thinking: true, thinkingBudget: 32768 },
+                { id: "claude-opus-4.5", thinking: true, thinkingBudget: 32768 },
+                { id: "claude-sonnet-4", thinking: true, thinkingBudget: 16384 },
+                { id: "claude-3.5-sonnet", thinking: false }
+            ]
+        },
+        openrouter: {
+            name: "OpenRouter",
+            endpoint: "https://openrouter.ai/api/v1",
+            defaultModel: "anthropic/claude-sonnet-4.5",
+            models: [
+                { id: "anthropic/claude-sonnet-4.5", thinking: true, thinkingBudget: 32768 },
+                { id: "anthropic/claude-opus-4.5", thinking: true, thinkingBudget: 32768 },
+                { id: "openai/gpt-5.2-high", thinking: false },
+                { id: "google/gemini-2.5-pro", thinking: false },
+                { id: "google/gemini-3.0-flash", thinking: false },
+                { id: "deepseek/deepseek-r1", thinking: true, thinkingBudget: 32768 },
+                { id: "qwen/qwen-2.5-max", thinking: false },
+                { id: "x-ai/grok-code-fast-1", thinking: false },
+                { id: "mistral/mistral-large", thinking: false },
+                { id: "meta-llama/llama-4-maverick", thinking: false }
+            ]
+        },
+        custom: {
+            name: "Custom",
+            endpoint: "",
+            defaultModel: "",
+            models: []
+        }
+    };
+
     // --- FACTORY DEFAULTS (12-Layer EGP Matrix) ---
     const defaultConfigs = {
-        // Visuals
+        // Display
         dockX: 310, dockY: 10,
         uiBaseColor: "#00d4ff", uiDockBgColor: "#0a0a12", uiOpacity: "0.90", uiBrightness: "1.0",
         uiScale: "1.0", uiRotate: "0", uiRotateDir: "1",
@@ -1201,7 +1262,10 @@ Fin.`,
         // API
         apiKey: (window.gemini_api_key || ""),
         apiEndpoint: "https://generativelanguage.googleapis.com/v1beta/models/",
-        apiModel: "gemini-2.0-flash",
+        apiModel: "gemini-3.0-pro",
+        apiProvider: "gemini",
+        thinkingEnabled: false,
+        thinkingBudget: 32768,
 
         // Active Council Pattern + Custom Overrides
         activeCouncil: "playoff-bracket",  // Default council for L1+
@@ -1256,6 +1320,22 @@ Fin.`,
 
         L12_Prefix: MATRIX_THEORIES.cognitron.layers[12].p,
         L12_Suffix: MATRIX_THEORIES.cognitron.layers[12].s,
+
+        // L1-L12 Mode Configuration (v17.5)
+        // 'cumulative' = includes all levels below (default stacking behavior)
+        // 'independent' = only this level's content when selected
+        L1_Mode: 'cumulative', L1_ExcludeFromStack: false,
+        L2_Mode: 'cumulative', L2_ExcludeFromStack: false,
+        L3_Mode: 'cumulative', L3_ExcludeFromStack: false,
+        L4_Mode: 'cumulative', L4_ExcludeFromStack: false,
+        L5_Mode: 'cumulative', L5_ExcludeFromStack: false,
+        L6_Mode: 'cumulative', L6_ExcludeFromStack: false,
+        L7_Mode: 'cumulative', L7_ExcludeFromStack: false,
+        L8_Mode: 'cumulative', L8_ExcludeFromStack: false,
+        L9_Mode: 'cumulative', L9_ExcludeFromStack: false,
+        L10_Mode: 'cumulative', L10_ExcludeFromStack: false,
+        L11_Mode: 'cumulative', L11_ExcludeFromStack: false,
+        L12_Mode: 'cumulative', L12_ExcludeFromStack: false,
     };
 
     // --- LOAD & SANITIZE STATE ---
@@ -1408,21 +1488,46 @@ Fin.`,
                                         else if (typeof layer !== 'string' && layer.s) suffixStack += `\n${layer.s}`;
                                     }
                                 } else {
-                                    // [V17.4] CUMULATIVE INJECTION (L1 → L2 → ... → Ln)
-                                    utLog(`🔥 Cumulative Injection: L1-L${currentLevel} (${currentLevel} layers stacked)`);
-                                    for (let lvl = 1; lvl <= currentLevel; lvl++) {
-                                        let layer = theory.layers[lvl];
-                                        if (!layer) continue;
-                                        let userPrefix = activeConfig[`L${lvl}_Prefix`];
-                                        let userSuffix = activeConfig[`L${lvl}_Suffix`];
-                                        let levelPrefix = (userPrefix && userPrefix.length > 5) ? userPrefix : (layer.p || "");
-                                        let levelSuffix = (userSuffix && userSuffix.length > 5) ? userSuffix : (layer.s || "");
-                                        if (levelPrefix) prefixStack += `\n${levelPrefix}`;
-                                        if (levelSuffix) suffixStack += `\n${levelSuffix}`;
-                                    }
-                                    // [TAIL-LOADING] Final mandate at very end for recency bias
-                                    if (currentLevel >= 6) {
-                                        suffixStack += `\n[FINAL_MANDATE: GROUND. VERIFY. OBEY!!!]`;
+                                    // [V17.5] CONFIGURABLE CUMULATIVE/INDEPENDENT INJECTION
+                                    const targetMode = activeConfig[`L${currentLevel}_Mode`] || 'cumulative';
+
+                                    if (targetMode === 'independent') {
+                                        // INDEPENDENT MODE: Only use this level's content
+                                        utLog(`◎ Solo Mode: L${currentLevel} only`);
+                                        let layer = theory.layers[currentLevel];
+                                        if (layer) {
+                                            let userPrefix = activeConfig[`L${currentLevel}_Prefix`];
+                                            let userSuffix = activeConfig[`L${currentLevel}_Suffix`];
+                                            let levelPrefix = (userPrefix && userPrefix.length > 5) ? userPrefix : (layer.p || "");
+                                            let levelSuffix = (userSuffix && userSuffix.length > 5) ? userSuffix : (layer.s || "");
+                                            if (levelPrefix) prefixStack += `\n${levelPrefix}`;
+                                            if (levelSuffix) suffixStack += `\n${levelSuffix}`;
+                                        }
+                                    } else {
+                                        // CUMULATIVE MODE: Stack L1 → Ln, respecting exclusions
+                                        utLog(`Σ Cumulative Injection: L1-L${currentLevel}`);
+                                        for (let lvl = 1; lvl <= currentLevel; lvl++) {
+                                            // Skip levels that are set to independent AND marked for exclusion
+                                            const lvlMode = activeConfig[`L${lvl}_Mode`] || 'cumulative';
+                                            const lvlExclude = activeConfig[`L${lvl}_ExcludeFromStack`] || false;
+                                            if (lvlMode === 'independent' && lvlExclude) {
+                                                utLog(`  ↳ Skipping L${lvl} (excluded from stack)`);
+                                                continue;
+                                            }
+
+                                            let layer = theory.layers[lvl];
+                                            if (!layer) continue;
+                                            let userPrefix = activeConfig[`L${lvl}_Prefix`];
+                                            let userSuffix = activeConfig[`L${lvl}_Suffix`];
+                                            let levelPrefix = (userPrefix && userPrefix.length > 5) ? userPrefix : (layer.p || "");
+                                            let levelSuffix = (userSuffix && userSuffix.length > 5) ? userSuffix : (layer.s || "");
+                                            if (levelPrefix) prefixStack += `\n${levelPrefix}`;
+                                            if (levelSuffix) suffixStack += `\n${levelSuffix}`;
+                                        }
+                                        // [TAIL-LOADING] Final mandate at very end for recency bias
+                                        if (currentLevel >= 6) {
+                                            suffixStack += `\n[FINAL_MANDATE: GROUND. VERIFY. OBEY!!!]`;
+                                        }
                                     }
                                 }
 
@@ -1492,21 +1597,46 @@ Fin.`,
                                     else if (typeof layer !== 'string' && layer.s) suffixStack += `\n${layer.s}`;
                                 }
                             } else {
-                                // [V17.4] CUMULATIVE INJECTION (L1 → L2 → ... → Ln)
-                                utLog(`🔥 Cumulative Injection: L1-L${currentLevel} (${currentLevel} layers stacked)`);
-                                for (let lvl = 1; lvl <= currentLevel; lvl++) {
-                                    let layer = theory.layers[lvl];
-                                    if (!layer) continue;
-                                    let userPrefix = activeConfig[`L${lvl}_Prefix`];
-                                    let userSuffix = activeConfig[`L${lvl}_Suffix`];
-                                    let levelPrefix = (userPrefix && userPrefix.length > 5) ? userPrefix : (layer.p || "");
-                                    let levelSuffix = (userSuffix && userSuffix.length > 5) ? userSuffix : (layer.s || "");
-                                    if (levelPrefix) prefixStack += `\n${levelPrefix}`;
-                                    if (levelSuffix) suffixStack += `\n${levelSuffix}`;
-                                }
-                                // [TAIL-LOADING] Final mandate at very end for recency bias
-                                if (currentLevel >= 6) {
-                                    suffixStack += `\n[FINAL_MANDATE: GROUND. VERIFY. OBEY!!!]`;
+                                // [V17.5] CONFIGURABLE CUMULATIVE/INDEPENDENT INJECTION
+                                const targetMode = activeConfig[`L${currentLevel}_Mode`] || 'cumulative';
+
+                                if (targetMode === 'independent') {
+                                    // INDEPENDENT MODE: Only use this level's content
+                                    utLog(`◎ Solo Mode: L${currentLevel} only`);
+                                    let layer = theory.layers[currentLevel];
+                                    if (layer) {
+                                        let userPrefix = activeConfig[`L${currentLevel}_Prefix`];
+                                        let userSuffix = activeConfig[`L${currentLevel}_Suffix`];
+                                        let levelPrefix = (userPrefix && userPrefix.length > 5) ? userPrefix : (layer.p || "");
+                                        let levelSuffix = (userSuffix && userSuffix.length > 5) ? userSuffix : (layer.s || "");
+                                        if (levelPrefix) prefixStack += `\n${levelPrefix}`;
+                                        if (levelSuffix) suffixStack += `\n${levelSuffix}`;
+                                    }
+                                } else {
+                                    // CUMULATIVE MODE: Stack L1 → Ln, respecting exclusions
+                                    utLog(`Σ Cumulative Injection: L1-L${currentLevel}`);
+                                    for (let lvl = 1; lvl <= currentLevel; lvl++) {
+                                        // Skip levels that are set to independent AND marked for exclusion
+                                        const lvlMode = activeConfig[`L${lvl}_Mode`] || 'cumulative';
+                                        const lvlExclude = activeConfig[`L${lvl}_ExcludeFromStack`] || false;
+                                        if (lvlMode === 'independent' && lvlExclude) {
+                                            utLog(`  ↳ Skipping L${lvl} (excluded from stack)`);
+                                            continue;
+                                        }
+
+                                        let layer = theory.layers[lvl];
+                                        if (!layer) continue;
+                                        let userPrefix = activeConfig[`L${lvl}_Prefix`];
+                                        let userSuffix = activeConfig[`L${lvl}_Suffix`];
+                                        let levelPrefix = (userPrefix && userPrefix.length > 5) ? userPrefix : (layer.p || "");
+                                        let levelSuffix = (userSuffix && userSuffix.length > 5) ? userSuffix : (layer.s || "");
+                                        if (levelPrefix) prefixStack += `\n${levelPrefix}`;
+                                        if (levelSuffix) suffixStack += `\n${levelSuffix}`;
+                                    }
+                                    // [TAIL-LOADING] Final mandate at very end for recency bias
+                                    if (currentLevel >= 6) {
+                                        suffixStack += `\n[FINAL_MANDATE: GROUND. VERIFY. OBEY!!!]`;
+                                    }
                                 }
                             }
 
@@ -1598,20 +1728,40 @@ Fin.`,
             }
 
         } else {
-            // [LEGACY] CUMULATIVE INJECTION (Cognitron/Socratic)
-            // Stack L1 through currentLevel for compounding enhancement
-            for (let lvl = 1; lvl <= currentLevel; lvl++) {
-                let layer = theory.layers[lvl];
-                if (!layer) continue;
+            // [V17.5] CONFIGURABLE CUMULATIVE/INDEPENDENT INJECTION (Fallback path)
+            // Helper: Resolve prefix/suffix for a level (user override or layer default)
+            const getLevelContent = (lvl, layer) => {
+                const userPre = activeConfig[`L${lvl}_Prefix`];
+                const userSuf = activeConfig[`L${lvl}_Suffix`];
+                return {
+                    prefix: (userPre && userPre.length > 5) ? userPre : (layer.p || ''),
+                    suffix: (userSuf && userSuf.length > 5) ? userSuf : (layer.s || '')
+                };
+            };
 
-                let userPrefix = activeConfig[`L${lvl}_Prefix`];
-                let userSuffix = activeConfig[`L${lvl}_Suffix`];
+            const targetMode = activeConfig[`L${currentLevel}_Mode`] || 'cumulative';
 
-                let levelPrefix = (userPrefix && userPrefix.length > 5) ? userPrefix : (layer.p || "");
-                let levelSuffix = (userSuffix && userSuffix.length > 5) ? userSuffix : (layer.s || "");
+            if (targetMode === 'independent') {
+                // INDEPENDENT MODE: Only use this level's content
+                const layer = theory.layers[currentLevel];
+                if (layer) {
+                    const { prefix, suffix } = getLevelContent(currentLevel, layer);
+                    if (prefix) prefixStack += `\n${prefix}`;
+                    if (suffix) suffixStack += `\n${suffix}`;
+                }
+            } else {
+                // CUMULATIVE MODE: Stack L1 → Ln, respecting exclusions
+                for (let lvl = 1; lvl <= currentLevel; lvl++) {
+                    const lvlMode = activeConfig[`L${lvl}_Mode`] || 'cumulative';
+                    const lvlExclude = activeConfig[`L${lvl}_ExcludeFromStack`] || false;
+                    if (lvlMode === 'independent' && lvlExclude) continue;
 
-                if (levelPrefix) prefixStack += `\n${levelPrefix}`;
-                if (levelSuffix) suffixStack += `\n${levelSuffix}`;
+                    const layer = theory.layers[lvl];
+                    if (!layer) continue;
+                    const { prefix, suffix } = getLevelContent(lvl, layer);
+                    if (prefix) prefixStack += `\n${prefix}`;
+                    if (suffix) suffixStack += `\n${suffix}`;
+                }
             }
         }
 
@@ -1818,31 +1968,35 @@ Fin.`,
         });
     }
 
-    // --- 3. CSS ENGINE (Neon Nexus v15.1) ---
+    // --- 3. CSS ENGINE (Neon Nexus v17.7) ---
+    // Helper: Convert hex color to RGB values
+    const hexToRgb = (hex, defaults = [0, 0, 0]) => {
+        const h = (hex || '').replace('#', '');
+        return [
+            parseInt(h.substring(0, 2), 16) || defaults[0],
+            parseInt(h.substring(2, 4), 16) || defaults[1],
+            parseInt(h.substring(4, 6), 16) || defaults[2]
+        ];
+    };
+
     function updateStyles() {
         const root = document.documentElement;
-        // Convert accent hex to rgb for opacity layers
-        let hex = activeConfig.uiBaseColor.replace('#', '');
-        const r = parseInt(hex.substring(0, 2), 16) || 0;
-        const g = parseInt(hex.substring(2, 4), 16) || 212;
-        const b = parseInt(hex.substring(4, 6), 16) || 255;
-
-        // Convert dock bg hex to rgb
-        let dockHex = (activeConfig.uiDockBgColor || '#0a0a12').replace('#', '');
-        const dr = parseInt(dockHex.substring(0, 2), 16) || 10;
-        const dg = parseInt(dockHex.substring(2, 4), 16) || 10;
-        const db = parseInt(dockHex.substring(4, 6), 16) || 18;
-
+        const [r, g, b] = hexToRgb(activeConfig.uiBaseColor, [0, 212, 255]);
+        const [dr, dg, db] = hexToRgb(activeConfig.uiDockBgColor || '#0a0a12', [10, 10, 18]);
         const deg = (parseFloat(activeConfig.uiRotate) || 0) * (parseInt(activeConfig.uiRotateDir) || 1);
 
-        root.style.setProperty('--ut-accent-rgb', `${r}, ${g}, ${b}`);
-        root.style.setProperty('--ut-accent', activeConfig.uiBaseColor);
-        root.style.setProperty('--ut-dock-bg-rgb', `${dr}, ${dg}, ${db}`);
-        root.style.setProperty('--ut-dock-bg', activeConfig.uiDockBgColor || '#0a0a12');
-        root.style.setProperty('--ut-opacity', activeConfig.uiOpacity);
-        root.style.setProperty('--ut-brightness', activeConfig.uiBrightness);
-        root.style.setProperty('--ut-scale', activeConfig.uiScale);
-        root.style.setProperty('--ut-rotate', `${deg}deg`);
+        // Batch CSS custom property updates
+        const props = {
+            '--ut-accent-rgb': `${r}, ${g}, ${b}`,
+            '--ut-accent': activeConfig.uiBaseColor,
+            '--ut-dock-bg-rgb': `${dr}, ${dg}, ${db}`,
+            '--ut-dock-bg': activeConfig.uiDockBgColor || '#0a0a12',
+            '--ut-opacity': activeConfig.uiOpacity,
+            '--ut-brightness': activeConfig.uiBrightness,
+            '--ut-scale': activeConfig.uiScale,
+            '--ut-rotate': `${deg}deg`
+        };
+        Object.entries(props).forEach(([k, v]) => root.style.setProperty(k, v));
     }
 
     const styles = `
@@ -2015,7 +2169,15 @@ Fin.`,
         }
 
         /* Modal Body - Scrollable middle section */
-        .ut-modal-body { padding: 30px; overflow-y: auto; flex: 1; min-height: 0; max-height: 75vh; }
+        .ut-modal-body { padding: 30px 36px; overflow-y: auto; flex: 1; min-height: 0; max-height: 78vh; }
+        
+        /* Modal Footer - Pinned at bottom */
+        .ut-modal-footer {
+            padding: 18px 28px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.25);
+            display: flex; justify-content: flex-end; gap: 12px;
+        }
         
         /* Carousel System */
         .ut-carousel { position: relative; overflow: hidden; }
@@ -2023,7 +2185,7 @@ Fin.`,
             display: flex; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .ut-carousel-slide {
-            min-width: 100%; flex-shrink: 0; padding: 0 5px;
+            min-width: 100%; flex-shrink: 0; padding: 0 24px;
         }
         .ut-carousel-nav {
             display: flex; justify-content: center; gap: 8px; padding: 16px 0;
@@ -2081,6 +2243,32 @@ Fin.`,
             outline: none;
         }
         textarea.ut-input-box { resize: vertical; min-height: 48px; }
+
+        /* Level Mode Controls (v17.5) */
+        .ut-level-controls { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+        .ut-select-mini { 
+            font-size: 10px; padding: 4px 8px; background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; 
+            color: var(--ut-text); cursor: pointer; transition: all 0.2s;
+        }
+        .ut-select-mini:hover { border-color: var(--ut-accent); }
+        .ut-select-mini:focus { outline: none; border-color: var(--ut-accent); box-shadow: 0 0 8px rgba(var(--ut-accent-rgb), 0.3); }
+        .ut-exclude-label { 
+            font-size: 10px; color: var(--ut-text-muted); 
+            display: flex; align-items: center; gap: 4px; cursor: pointer;
+            padding: 2px 6px; border-radius: 4px; transition: all 0.2s;
+        }
+        .ut-exclude-label:hover { background: rgba(255,255,255,0.05); }
+        .ut-exclude-label input { width: 12px; height: 12px; accent-color: var(--ut-accent); }
+
+        /* Hover Preview Tooltip Styling */
+        .tt-preview { margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.4); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); }
+        .tt-preview-label { font-size: 9px; color: var(--ut-accent); margin-bottom: 2px; font-weight: 600; text-transform: uppercase; }
+        .tt-preview-code { 
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; 
+            color: var(--ut-text-muted); white-space: pre-wrap; word-break: break-word;
+            max-height: 50px; overflow: hidden; margin: 0 0 8px 0; line-height: 1.4;
+        }
 
         /* Checkbox Custom */
         #ut-dock input[type="checkbox"] {
@@ -2833,10 +3021,10 @@ Fin.`,
                 <div class="ut-modal-title">
                     <span class="material-icons-outlined" style="color:var(--ut-accent);">⚙️</span>
                     Matrix Configuration
-                    <span class="ut-modal-badge">v15.2</span>
+                    <span class="ut-modal-badge">v17.7</span>
                 </div>
                 <div style="display:flex; gap:8px;">
-                    <button id="ut-open-vis" class="ut-btn ut-btn-ghost" title="Visual Studio">🎨 Visuals</button>
+                    <button id="ut-open-vis" class="ut-btn ut-btn-ghost" title="Display Settings">🎨 Display</button>
                     <button id="ut-open-api" class="ut-btn ut-btn-ghost" title="API Reactor">⚡ API</button>
                 </div>
             </div>
@@ -2853,38 +3041,45 @@ Fin.`,
                 </style>
                 
                 <div class="ut-carousel">
+                    <!-- Carousel Arrow Buttons -->
+                    <div class="ut-carousel-arrows">
+                        <button class="ut-carousel-arrow" id="ut-carousel-prev" title="Previous">◀</button>
+                        <button class="ut-carousel-arrow" id="ut-carousel-next" title="Next">▶</button>
+                    </div>
+                    
                     <div class="ut-carousel-track" id="ut-carousel-track">
                         
-                        <!-- SLIDE 1: Settings + Layers 1-6 -->
-                        <div class="ut-carousel-slide" style="padding:20px;">
+                        <!-- SLIDE 1: Layers 1-6 -->
+                        <div class="ut-carousel-slide" style="padding:20px 32px;">
                             <div style="text-align:center; margin-bottom:16px;">
-                                <span style="font-size:12px; color:var(--ut-accent); font-weight:600;">📊 Settings & Layers 1-6</span>
-                            </div>
-                            
-                            <div style="margin-bottom:16px; padding:10px; background:rgba(var(--ut-accent-rgb), 0.05); border-radius:8px; border:1px solid rgba(var(--ut-accent-rgb), 0.1);">
-                                <label style="font-size:11px; color:var(--ut-text-muted); display:flex; align-items:center; gap:8px;">
-                                    📊 Logging Level
-                                    <select id="ut-logging-level" style="background:rgba(20,20,25,0.8); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:4px 8px; border-radius:4px; font-size:11px;">
-                                        <option value="silent" ${activeConfig.loggingLevel === 'silent' ? 'selected' : ''}>🔇 Silent</option>
-                                        <option value="normal" ${activeConfig.loggingLevel === 'normal' ? 'selected' : ''}>📝 Normal</option>
-                                        <option value="verbose" ${activeConfig.loggingLevel === 'verbose' ? 'selected' : ''}>🔬 Verbose</option>
-                                    </select>
-                                </label>
+                                <span style="font-size:12px; color:var(--ut-accent); font-weight:600;">📊 Layers 1-6</span>
                             </div>
 
-                            <div class="ut-grid-row" style="border-bottom:1px solid var(--ut-glass-border); padding-bottom:6px; margin-bottom:12px;">
+                            <div class="ut-grid-row" style="grid-template-columns: 40px 1fr 1fr 90px; border-bottom:1px solid var(--ut-glass-border); padding-bottom:6px; margin-bottom:12px;">
                                 <div class="ut-label">LVL</div>
                                 <div class="ut-label">PREFIX</div>
                                 <div class="ut-label">SUFFIX</div>
+                                <div class="ut-label">MODE</div>
                             </div>`;
 
         // Layers 1-6 on first slide
         for (let i = 1; i <= 6; i++) {
+            const modeVal = activeConfig[`L${i}_Mode`] || 'cumulative';
+            const excludeVal = activeConfig[`L${i}_ExcludeFromStack`] || false;
             mmHTML += `
-                            <div class="ut-grid-row">
+                            <div class="ut-grid-row" style="grid-template-columns: 40px 1fr 1fr 90px;">
                                 <div style="font-family:'JetBrains Mono'; font-size:12px; color:var(--ut-text-muted); padding-top:8px;">L${i}</div>
                                 <textarea id="cfg-l${i}-pre" class="ut-input-box" rows="2" placeholder="Prefix...">${activeConfig[`L${i}_Prefix`] || ''}</textarea>
                                 <textarea id="cfg-l${i}-suf" class="ut-input-box" rows="2" placeholder="Suffix...">${activeConfig[`L${i}_Suffix`] || ''}</textarea>
+                                <div class="ut-level-controls">
+                                    <select id="cfg-l${i}-mode" class="ut-select-mini" title="Cumulative (Σ) stacks L1-Ln. Independent (◎) uses only this level.">
+                                        <option value="cumulative" ${modeVal === 'cumulative' ? 'selected' : ''}>Σ Stack</option>
+                                        <option value="independent" ${modeVal === 'independent' ? 'selected' : ''}>◎ Solo</option>
+                                    </select>
+                                    <label id="cfg-l${i}-exclude-wrap" class="ut-exclude-label" style="${modeVal === 'independent' ? '' : 'display:none;'}" title="Exclude this level from other cumulative stacks">
+                                        <input type="checkbox" id="cfg-l${i}-exclude" ${excludeVal ? 'checked' : ''}> Excl
+                                    </label>
+                                </div>
                             </div>`;
         }
 
@@ -2892,24 +3087,36 @@ Fin.`,
                         </div>
                         
                         <!-- SLIDE 2: Layers 7-12 -->
-                        <div class="ut-carousel-slide" style="padding:20px;">
+                        <div class="ut-carousel-slide" style="padding:20px 32px;">
                             <div style="text-align:center; margin-bottom:16px;">
                                 <span style="font-size:12px; color:var(--ut-accent); font-weight:600;">🔥 Layers 7-12 (Advanced)</span>
                             </div>
                             
-                            <div class="ut-grid-row" style="border-bottom:1px solid var(--ut-glass-border); padding-bottom:6px; margin-bottom:12px;">
+                            <div class="ut-grid-row" style="grid-template-columns: 40px 1fr 1fr 90px; border-bottom:1px solid var(--ut-glass-border); padding-bottom:6px; margin-bottom:12px;">
                                 <div class="ut-label">LVL</div>
                                 <div class="ut-label">PREFIX</div>
                                 <div class="ut-label">SUFFIX</div>
+                                <div class="ut-label">MODE</div>
                             </div>`;
 
         // Layers 7-12 on second slide
         for (let i = 7; i <= 12; i++) {
+            const modeVal = activeConfig[`L${i}_Mode`] || 'cumulative';
+            const excludeVal = activeConfig[`L${i}_ExcludeFromStack`] || false;
             mmHTML += `
-                            <div class="ut-grid-row">
+                            <div class="ut-grid-row" style="grid-template-columns: 40px 1fr 1fr 90px;">
                                 <div style="font-family:'JetBrains Mono'; font-size:12px; color:var(--ut-text-muted); padding-top:8px;">L${i}</div>
                                 <textarea id="cfg-l${i}-pre" class="ut-input-box" rows="2" placeholder="Prefix...">${activeConfig[`L${i}_Prefix`] || ''}</textarea>
                                 <textarea id="cfg-l${i}-suf" class="ut-input-box" rows="2" placeholder="Suffix...">${activeConfig[`L${i}_Suffix`] || ''}</textarea>
+                                <div class="ut-level-controls">
+                                    <select id="cfg-l${i}-mode" class="ut-select-mini" title="Cumulative (Σ) stacks L1-Ln. Independent (◎) uses only this level.">
+                                        <option value="cumulative" ${modeVal === 'cumulative' ? 'selected' : ''}>Σ Stack</option>
+                                        <option value="independent" ${modeVal === 'independent' ? 'selected' : ''}>◎ Solo</option>
+                                    </select>
+                                    <label id="cfg-l${i}-exclude-wrap" class="ut-exclude-label" style="${modeVal === 'independent' ? '' : 'display:none;'}" title="Exclude this level from other cumulative stacks">
+                                        <input type="checkbox" id="cfg-l${i}-exclude" ${excludeVal ? 'checked' : ''}> Excl
+                                    </label>
+                                </div>
                             </div>`;
         }
 
@@ -2917,7 +3124,7 @@ Fin.`,
                         </div>
                         
                         <!-- SLIDE 3: System Actions -->
-                        <div class="ut-carousel-slide" style="padding:20px;">
+                        <div class="ut-carousel-slide" style="padding:20px 32px;">
                             <div style="text-align:center; margin-bottom:16px;">
                                 <span style="font-size:12px; color:var(--ut-accent); font-weight:600;">⚙️ System Actions</span>
                             </div>
@@ -2965,34 +3172,31 @@ Fin.`,
     `;
         setSafeHTML(mm, mmHTML); document.body.appendChild(mm);
 
-        /* --- VISUAL STUDIO MODAL --- */
-        const vm = document.createElement('div'); vm.id = 'ut-vis-modal'; vm.className = 'ut-modal'; vm.style.width = "520px"; vm.style.maxHeight = "95vh";
+        /* --- DISPLAY SETTINGS MODAL --- */
+        const vm = document.createElement('div'); vm.id = 'ut-vis-modal'; vm.className = 'ut-modal'; vm.style.width = "540px"; vm.style.maxHeight = "95vh";
 
-        // Generate provider radio buttons
+        // Generate provider dropdown options
         const providerKeys = Object.keys(PROVIDERS);
-        const providerRadioHTML = providerKeys.map(key => {
+        const providerOptionsHTML = providerKeys.map(key => {
             const p = PROVIDERS[key];
-            const checked = key === currentProviderKey ? 'checked' : '';
-            return `<label style="display:flex; align-items:center; gap:6px; padding:6px 10px; background:${checked ? 'rgba(var(--ut-accent-rgb), 0.15)' : 'rgba(255,255,255,0.03)'}; border:1px solid ${checked ? 'rgba(var(--ut-accent-rgb), 0.4)' : 'rgba(255,255,255,0.08)'}; border-radius:8px; cursor:pointer; transition:all 0.2s;">
-                <input type="radio" name="ut-provider-select" value="${key}" ${checked} style="accent-color:var(--ut-accent);">
-                <span style="font-size:11px; color:${checked ? 'var(--ut-accent)' : 'var(--ut-text-muted)'};">${p.name}</span>
-            </label>`;
+            const selected = key === currentProviderKey ? 'selected' : '';
+            return `<option value="${key}" ${selected}>${p.name}</option>`;
         }).join('');
 
         setSafeHTML(vm, `
             <div class="ut-modal-header">
-                <div class="ut-modal-title"><span class="material-icons-outlined">🎨</span> Visual Studio</div>
+                <div class="ut-modal-title"><span class="material-icons-outlined">🎨</span> Display Settings</div>
                 <div style="font-size:11px; color:var(--ut-accent); background:rgba(var(--ut-accent-rgb), 0.1); padding:4px 10px; border-radius:12px;">
                     ${currentProvider.name}
                 </div>
             </div>
-            <div class="ut-modal-body">
+            <div class="ut-modal-body" style="padding:24px 32px;">
                 <!-- Provider Selection -->
-                <div style="margin-bottom:20px; padding:12px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:10px;">
+                <div style="margin-bottom:20px; padding:16px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:10px;">
                     <div class="ut-label" style="margin-bottom:10px;">CONFIGURE FOR PROVIDER</div>
-                    <div id="ut-provider-radios" style="display:flex; flex-wrap:wrap; gap:8px;">
-                        ${providerRadioHTML}
-                    </div>
+                    <select id="ut-provider-select" class="ut-input-box" style="width:100%;">
+                        ${providerOptionsHTML}
+                    </select>
                     <div style="font-size:10px; color:var(--ut-text-muted); margin-top:8px;">
                         Each provider saves its own positioning & visual settings.
                     </div>
@@ -3052,16 +3256,32 @@ Fin.`,
         document.body.appendChild(vm);
 
         /* --- API REACTOR MODAL --- */
-        const am = document.createElement('div'); am.id = 'ut-api-modal'; am.className = 'ut-modal'; am.style.width = "500px";
+        const am = document.createElement('div'); am.id = 'ut-api-modal'; am.className = 'ut-modal'; am.style.width = "540px";
+
+        // Build provider preset options from PROVIDER_PRESETS
+        const apiPresetOptions = Object.entries(PROVIDER_PRESETS).map(([key, preset]) => {
+            const selected = key === (activeConfig.apiProvider || 'gemini') ? 'selected' : '';
+            return `<option value="${key}" ${selected}>${preset.name}</option>`;
+        }).join('');
+
+        // Build model options for current provider
+        const currentPreset = PROVIDER_PRESETS[activeConfig.apiProvider || 'gemini'];
+        const modelOptions = currentPreset.models.map(m => {
+            const modelId = typeof m === 'object' ? m.id : m;
+            const selected = modelId === activeConfig.apiModel ? 'selected' : '';
+            const thinkingLabel = (typeof m === 'object' && m.thinking) ? ' 🧠' : '';
+            return `<option value="${modelId}" ${selected}>${modelId}${thinkingLabel}</option>`;
+        }).join('');
+
         setSafeHTML(am, `
             <div class="ut-modal-header">
                 <div class="ut-modal-title"><span class="material-icons-outlined">⚡</span> API Reactor</div>
             </div>
-            <div class="ut-modal-body">
+            <div class="ut-modal-body" style="padding:24px 32px;">
                 <div style="margin-bottom:16px;">
                     <div class="ut-label">PROVIDER PRESET</div>
                     <select id="ut-api-preset" class="ut-input-box" style="margin-top:6px;">
-                        <option value="gemini">Google Gemini</option><option value="openrouter">OpenRouter</option><option value="openai">OpenAI</option><option value="custom">Custom</option>
+                        ${apiPresetOptions}
                     </select>
                 </div>
                 <div style="margin-bottom:16px;">
@@ -3073,12 +3293,42 @@ Fin.`,
                     <input id="ut-api-key" type="password" class="ut-input-box" style="margin-top:6px;" value="${activeConfig.apiKey}">
                 </div>
                 <div style="margin-bottom:16px;">
-                    <div class="ut-label">MODEL ID</div>
+                    <div class="ut-label">MODEL</div>
+                    <select id="ut-api-model-select" class="ut-input-box" style="margin-top:6px;">
+                        ${modelOptions}
+                    </select>
                     <div style="display:flex; gap:8px; margin-top:6px;">
-                        <input id="ut-api-model" class="ut-input-box" value="${activeConfig.apiModel}">
-                        <button id="ut-fetch-models" class="ut-btn ut-btn-ghost" title="Fetch Models">▼</button>
+                        <input id="ut-api-model" class="ut-input-box" style="flex:1;" value="${activeConfig.apiModel}" placeholder="Or enter custom model ID...">
+                        <button id="ut-fetch-models" class="ut-btn ut-btn-ghost" title="Fetch Models from API">🔄</button>
                     </div>
-                    <select id="ut-model-list" class="ut-input-box" style="display:none; margin-top:5px;"></select>
+                </div>
+                
+                <!-- Thinking Model Support -->
+                <div style="margin-bottom:16px; padding:12px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:8px;">
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                        <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                            <input type="checkbox" id="ut-thinking-enabled" ${activeConfig.thinkingEnabled ? 'checked' : ''} style="accent-color:var(--ut-accent);">
+                            <span class="ut-label" style="margin:0;">🧠 THINKING MODE</span>
+                        </label>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:10px; color:var(--ut-text-muted);">Budget:</span>
+                        <input id="ut-thinking-budget" type="number" class="ut-input-box" style="width:100px; padding:6px 10px;" value="${activeConfig.thinkingBudget}" min="1024" max="65536" step="1024">
+                        <span style="font-size:10px; color:var(--ut-text-muted);">tokens</span>
+                    </div>
+                    <div style="font-size:10px; color:var(--ut-text-muted); margin-top:6px;">Enable for Claude/o3 thinking models. Budget controls reasoning depth.</div>
+                </div>
+                
+                <!-- Logging Level (moved from main modal) -->
+                <div style="margin-bottom:16px; padding:12px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:8px;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span class="ut-label" style="margin:0;">📊 LOGGING LEVEL</span>
+                        <select id="ut-logging-level" class="ut-input-box" style="flex:1;">
+                            <option value="silent" ${activeConfig.loggingLevel === 'silent' ? 'selected' : ''}>🔇 Silent</option>
+                            <option value="normal" ${activeConfig.loggingLevel === 'normal' ? 'selected' : ''}>📝 Normal</option>
+                            <option value="verbose" ${activeConfig.loggingLevel === 'verbose' ? 'selected' : ''}>🔬 Verbose</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="ut-modal-footer">
@@ -3118,15 +3368,41 @@ Fin.`,
     }
 
     function getLevelTooltipHTML(level) {
-        const doc = LEVEL_DOCS[level];
-        if (!doc) return '';
+        // Get current theory and layer data
+        const theory = MATRIX_THEORIES[activeConfig.activeMatrix] || MATRIX_THEORIES['cognitron'];
+        const layer = theory.layers[level];
+
+        // Get actual prefix/suffix content (user config or theory default)
+        let prefixContent = activeConfig[`L${level}_Prefix`] || (layer?.p || '');
+        let suffixContent = activeConfig[`L${level}_Suffix`] || (layer?.s || '');
+
+        // Escape HTML and truncate for preview
+        const escapeHtml = (str) => str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const maxLen = 120;
+        let previewPrefix = prefixContent.length > maxLen ? prefixContent.slice(0, maxLen) + '...' : prefixContent;
+        let previewSuffix = suffixContent.length > maxLen ? suffixContent.slice(0, maxLen) + '...' : suffixContent;
+
+        // Get mode info
+        const mode = activeConfig[`L${level}_Mode`] || 'cumulative';
+        const modeLabel = mode === 'independent' ? '◎ Solo' : 'Σ Stack';
+        const modeColor = mode === 'independent' ? '#ff9f43' : 'var(--ut-accent)';
+
+        // Extract first directive from prefix for naming (e.g., [DIRECTIVE: X] → X)
+        const directiveMatch = prefixContent.match(/\[(?:DIRECTIVE|MODE|STATE|COUNCIL):\s*([^\]]+)\]/);
+        const levelName = directiveMatch ? directiveMatch[1].replace(/_/g, ' ') : `Level ${level}`;
+
         return `
             <div class="tt-header">
-                <span class="tt-name">Level ${level}: ${doc.name}</span>
-                <span class="tt-tag">${doc.phase}</span>
+                <span class="tt-name">L${level}: ${levelName}</span>
+                <span class="tt-tag" style="background:${modeColor};">${modeLabel}</span>
             </div>
-            <div class="tt-body">${doc.desc}</div>
-            <div class="tt-meta">${doc.cumulative}</div>
+            <div class="tt-preview">
+                <div class="tt-preview-label">PREFIX</div>
+                <pre class="tt-preview-code">${escapeHtml(previewPrefix) || '(empty)'}</pre>
+                <div class="tt-preview-label">SUFFIX</div>
+                <pre class="tt-preview-code">${escapeHtml(previewSuffix) || '(empty)'}</pre>
+            </div>
+            <div class="tt-meta">${prefixContent.length + suffixContent.length} chars total</div>
         `;
     }
 
@@ -3486,15 +3762,38 @@ tags: [ai-chat, ${currentProvider.name.toLowerCase()}, export, ${activeConfig.ac
             });
         });
 
+        // Carousel Arrow Navigation
+        document.getElementById('ut-carousel-prev').addEventListener('click', () => goToSlide(carouselIndex - 1));
+        document.getElementById('ut-carousel-next').addEventListener('click', () => goToSlide(carouselIndex + 1));
+
+        // Keyboard navigation for carousel
+        main.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') goToSlide(carouselIndex - 1);
+            if (e.key === 'ArrowRight') goToSlide(carouselIndex + 1);
+        });
+
         document.getElementById('ut-save-btn').addEventListener('click', () => {
-            activeConfig.loggingLevel = document.getElementById('ut-logging-level').value;
+            // Save layer settings
             for (let i = 1; i <= 12; i++) {
                 activeConfig[`L${i}_Prefix`] = document.getElementById(`cfg-l${i}-pre`).value;
                 activeConfig[`L${i}_Suffix`] = document.getElementById(`cfg-l${i}-suf`).value;
+                activeConfig[`L${i}_Mode`] = document.getElementById(`cfg-l${i}-mode`).value;
+                activeConfig[`L${i}_ExcludeFromStack`] = document.getElementById(`cfg-l${i}-exclude`).checked;
             }
             GM_setValue(STORAGE_PREFIX + "profiles", { [DEFAULT_PROFILE]: activeConfig });
             main.classList.remove('show'); setTimeout(() => main.style.display = 'none', 300); showToast("Settings Saved", "success");
         });
+
+        // Mode toggle handlers - show/hide exclude checkbox based on mode
+        for (let i = 1; i <= 12; i++) {
+            const modeSelect = document.getElementById(`cfg-l${i}-mode`);
+            const excludeWrap = document.getElementById(`cfg-l${i}-exclude-wrap`);
+            if (modeSelect && excludeWrap) {
+                modeSelect.addEventListener('change', (e) => {
+                    excludeWrap.style.display = e.target.value === 'independent' ? '' : 'none';
+                });
+            }
+        }
 
         // Load active theory into fields
         document.getElementById('ut-load-theory')?.addEventListener('click', () => {
@@ -3586,9 +3885,10 @@ tags: [ai-chat, ${currentProvider.name.toLowerCase()}, export, ${activeConfig.ac
             saveProviderVisuals(selectedVisualProvider, visualSettings);
         };
 
-        // Provider radio button handlers
-        document.querySelectorAll('input[name="ut-provider-select"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
+        // Provider dropdown handler (Display Settings modal)
+        const providerSelect = document.getElementById('ut-provider-select');
+        if (providerSelect) {
+            providerSelect.addEventListener('change', (e) => {
                 selectedVisualProvider = e.target.value;
                 const visuals = getProviderVisuals(selectedVisualProvider);
 
@@ -3613,23 +3913,9 @@ tags: [ai-chat, ${currentProvider.name.toLowerCase()}, export, ${activeConfig.ac
                     r.checked = r.value === (visuals.uiRotateDir || "1");
                 });
 
-                // Visual feedback on radio selection
-                document.querySelectorAll('input[name="ut-provider-select"]').forEach(r => {
-                    const label = r.closest('label');
-                    if (r.checked) {
-                        label.style.background = 'rgba(var(--ut-accent-rgb), 0.15)';
-                        label.style.borderColor = 'rgba(var(--ut-accent-rgb), 0.4)';
-                        label.querySelector('span').style.color = 'var(--ut-accent)';
-                    } else {
-                        label.style.background = 'rgba(255,255,255,0.03)';
-                        label.style.borderColor = 'rgba(255,255,255,0.08)';
-                        label.querySelector('span').style.color = 'var(--ut-text-muted)';
-                    }
-                });
-
                 showToast(`📍 Editing: ${PROVIDERS[selectedVisualProvider]?.name || selectedVisualProvider}`);
             });
-        });
+        }
 
         ['ut-vis-x', 'ut-vis-y', 'ut-vis-scale', 'ut-vis-opacity', 'ut-vis-bright', 'ut-vis-rotate', 'ut-vis-color', 'ut-vis-dock-bg'].forEach(id => document.getElementById(id).addEventListener('input', updateVis));
         document.querySelectorAll('input[name="rdir"]').forEach(el => el.addEventListener('change', updateVis));
@@ -3674,11 +3960,69 @@ tags: [ai-chat, ${currentProvider.name.toLowerCase()}, export, ${activeConfig.ac
             }
         });
 
+        // API Preset change handler - sync endpoint + model
         document.getElementById('ut-api-preset').addEventListener('change', (e) => {
-            if (e.target.value === 'gemini') document.getElementById('ut-api-ep').value = "https://generativelanguage.googleapis.com/v1beta/models/";
-            if (e.target.value === 'openrouter') document.getElementById('ut-api-ep').value = "https://openrouter.ai/api/v1";
-            if (e.target.value === 'openai') document.getElementById('ut-api-ep').value = "https://api.openai.com/v1";
+            const presetKey = e.target.value;
+            const preset = PROVIDER_PRESETS[presetKey];
+            if (preset) {
+                // Update endpoint
+                document.getElementById('ut-api-ep').value = preset.endpoint;
+
+                // Update model input and dropdown
+                document.getElementById('ut-api-model').value = preset.defaultModel;
+
+                // Rebuild model dropdown
+                const modelSelect = document.getElementById('ut-api-model-select');
+                if (modelSelect) {
+                    while (modelSelect.firstChild) modelSelect.removeChild(modelSelect.firstChild);
+                    preset.models.forEach(m => {
+                        const modelId = typeof m === 'object' ? m.id : m;
+                        const thinking = typeof m === 'object' && m.thinking;
+                        const opt = document.createElement('option');
+                        opt.value = modelId;
+                        opt.textContent = modelId + (thinking ? ' 🧠' : '');
+                        if (modelId === preset.defaultModel) opt.selected = true;
+                        modelSelect.appendChild(opt);
+                    });
+                }
+
+                // Auto-enable thinking for thinking models
+                const selectedModel = preset.models.find(m =>
+                    (typeof m === 'object' ? m.id : m) === preset.defaultModel
+                );
+                if (selectedModel && typeof selectedModel === 'object' && selectedModel.thinking) {
+                    document.getElementById('ut-thinking-enabled').checked = true;
+                    if (selectedModel.thinkingBudget) {
+                        document.getElementById('ut-thinking-budget').value = selectedModel.thinkingBudget;
+                    }
+                }
+
+                showToast(`⚡ Preset: ${preset.name}`);
+            }
         });
+
+        // Model dropdown change - sync to input field and auto-detect thinking
+        const modelSelect = document.getElementById('ut-api-model-select');
+        if (modelSelect) {
+            modelSelect.addEventListener('change', (e) => {
+                document.getElementById('ut-api-model').value = e.target.value;
+
+                // Check if selected model supports thinking
+                const presetKey = document.getElementById('ut-api-preset').value;
+                const preset = PROVIDER_PRESETS[presetKey];
+                if (preset) {
+                    const selectedModel = preset.models.find(m =>
+                        (typeof m === 'object' ? m.id : m) === e.target.value
+                    );
+                    if (selectedModel && typeof selectedModel === 'object' && selectedModel.thinking) {
+                        document.getElementById('ut-thinking-enabled').checked = true;
+                        if (selectedModel.thinkingBudget) {
+                            document.getElementById('ut-thinking-budget').value = selectedModel.thinkingBudget;
+                        }
+                    }
+                }
+            });
+        }
 
         document.getElementById('ut-fetch-models').addEventListener('click', () => {
             const ep = document.getElementById('ut-api-ep').value;
@@ -3718,11 +4062,15 @@ tags: [ai-chat, ${currentProvider.name.toLowerCase()}, export, ${activeConfig.ac
         });
 
         document.getElementById('ut-api-save').addEventListener('click', () => {
+            activeConfig.apiProvider = document.getElementById('ut-api-preset').value;
             activeConfig.apiEndpoint = document.getElementById('ut-api-ep').value;
             activeConfig.apiKey = document.getElementById('ut-api-key').value;
             activeConfig.apiModel = document.getElementById('ut-api-model').value;
+            activeConfig.thinkingEnabled = document.getElementById('ut-thinking-enabled').checked;
+            activeConfig.thinkingBudget = parseInt(document.getElementById('ut-thinking-budget').value) || 32768;
+            activeConfig.loggingLevel = document.getElementById('ut-logging-level').value;
             GM_setValue(STORAGE_PREFIX + "profiles", { [DEFAULT_PROFILE]: activeConfig });
-            api.classList.remove('show'); setTimeout(() => api.style.display = 'none', 300); main.style.display = 'block'; setTimeout(() => main.classList.add('show'), 10); showToast("API Saved");
+            api.classList.remove('show'); setTimeout(() => api.style.display = 'none', 300); main.style.display = 'block'; setTimeout(() => main.classList.add('show'), 10); showToast("API Settings Saved", "success");
         });
     }
 

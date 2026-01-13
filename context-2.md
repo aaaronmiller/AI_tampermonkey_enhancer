@@ -14121,3 +14121,57 @@ Please reload Tampermonkey and refresh Gemini/Claude/OpenAI. The toolbar should 
 
 Note: The console errors you saw (/ces/v1/... - ERR_BLOCKED_BY_CLIENT) are from your ad blocker, not from this script.
 
+Implementing Level Mode Controls
+
+
+make it so each of the l1-12 options has a toggle in the config area that allows it to be either a cumulative option (includes all levels below it) or allows it to be an independent selection (just its content) - also if user selects to make it independent; another selector should show up that allows the content to be removed from the other cumulative options (basically to enable a setting that is whatever the user wants it to be - they can. have it be pre-set to act as prompts whateve) - also make it so that when user hovers over each over the l1-12 options, it shows a brief preview of what the content that is in that selection so they can find things if they forget where they are
+
+Thought for 9s
+
+
+Understanding L1-12 Configuration System
+Completed codebase analysis. Found: level orb UI (lines 2777-2794), cumulative injection logic (lines 1411-1427, 1495-1511), config modal with L1-12 prefix/suffix textareas (lines 2900-2914), tooltip system using 
+getLevelTooltipHTML()
+ (lines 3120-3131), and LEVEL_DOCS for documentation. System currently uses matrix type (sovereignty vs others) to determine cumulative/single injection.
+
+Progress Updates
+1
+Exploring current codebase structure to understand L1-12 implementation
+
+2
+Searching for existing level selector UI and configuration storage mechanisms
+
+3
+Locating level selector UI rendering and configuration panel code
+
+4
+Completing UI analysis then drafting implementation plan
+
+5
+Creating implementation plan with complete feature specification
+
+6
+Searching for existing tests before drafting plan
+
+Planning L1-12 Cumulative/Independent Toggle Feature
+Completed codebase analysis. Found all key components: level orb UI (lines 2777-2794), cumulative injection logic (lines 1411-1427), config modal (lines 2900-2914), tooltip system (lines 3120-3131). No existing test infrastructure found. Ready to draft plan.
+
+Files Edited
+Implementation Plan
+Task
+Progress Updates
+1
+Creating implementation plan and task.md artifacts
+
+Implementation plan ready for review.
+
+Summary of proposed changes:
+
+Data Model — Add L{n}_Mode ('cumulative' | 'independent') and L{n}_ExcludeFromStack properties per level
+Config UI — Add a mode toggle dropdown and conditional "Exclude" checkbox for each L1-12 row in the config modal
+Hover Previews — Extend the existing tooltip system to show truncated PREFIX/SUFFIX content when hovering level orbs
+Injection Logic — Modify processVoltronPayload() to respect per-level modes: independent levels use only their content, excluded levels are skipped in cumulative stacks
+Ready to implement once approved.
+
+Implementation Plan
+Open
